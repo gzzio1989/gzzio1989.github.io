@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>バンドフィックスグッジオ (BandFixGzzio) — G'zzio</title>
+<meta name="description" content="バランスの悪いバンド録音を、AIがパートごとに分解して、ととのえて、ミックスしなおすWindowsアプリ。ハモリだけ抜き出すこともできます。">
+<meta property="og:title" content="バンドフィックスグッジオ (BandFixGzzio)">
+<meta property="og:description" content="AIでバンド録音をばらばらに分解し、ととのえてミックスしなおす。ハモリだけの書き出しにも対応。">
+<link rel="icon" href="../../assets/icon.png">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="../../assets/site.css">
+<style>:root{--accent:var(--grape);--accent-deep:#6d4b8f}</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="inner">
+    <a class="brand" href="../../"><img src="../../assets/icon.png" alt=""><b>G'zzio</b></a>
+    <nav>
+      <a href="../../"><span class="ja">ソフト一覧</span><span class="en">Apps</span></a>
+      <a href="#features"><span class="ja">できること</span><span class="en">Features</span></a>
+      <a href="#use"><span class="ja">つかいかた</span><span class="en">How to use</span></a>
+      <a href="#inside"><span class="ja">中身の処理</span><span class="en">Inside</span></a>
+      <span class="langbtn">
+        <button type="button" data-lang="ja" aria-pressed="true">日本語</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="prod-hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="ver">v1.3.0 &middot; Windows 10 / 11</span>
+      <h1><span class="ja">バンドフィックスグッジオ</span><span class="en">BandFixGzzio</span></h1>
+      <p class="lead">
+        <span class="ja">バランスの悪いバンド録音を、AI がパートごとに<b>ばらばらに分解</b>して、
+          バランスと EQ を<b>ととのえて</b>、いいかんじに<b>ミックスしなおす</b>アプリです。
+          ハモリだけを抜き出すこともできます。ボーカルグッジオの姉妹アプリ。</span>
+        <span class="en">It pulls a badly balanced band recording <b>apart</b> with AI, <b>evens out</b> the
+          levels and EQ, and <b>mixes it back together</b>. It can also lift just the harmony line out.
+          A sister app to VocalGzzio.</span>
+      </p>
+      <div class="actions" style="display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn btn-primary" href="https://github.com/gzzio1989/BandFixGzzio/releases/latest" target="_blank" rel="noopener">
+          <span class="ja">ダウンロード</span><span class="en">Download</span></a>
+        <a class="btn btn-ghost" href="#use"><span class="ja">つかいかたを見る</span><span class="en">How it works</span></a>
+      </div>
+    </div>
+    <div class="hero-art"><img src="../../assets/puniguji.png" alt="" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <p class="section-title">Features</p>
+    <h2><span class="ja">できること</span><span class="en">What it does</span></h2>
+    <ul class="featlist reveal">
+      <li><b><span class="ja">パート分解（AI）</span><span class="en">Part separation (AI)</span></b>
+        <span class="ja">最大6パート（ボーカル / ドラム / ベース / ギター / ピアノ / その他）。鳴っていないパートは自動で除外。はやい4パートモードもあります。</span>
+        <span class="en">Up to six parts - vocals, drums, bass, guitar, piano and other. Parts that are not playing are dropped automatically. A faster four-part mode is included.</span></li>
+      <li><b><span class="ja">ハモリ分離（AI）</span><span class="en">Harmony separation (AI)</span></b>
+        <span class="ja">ボーカルをさらに「メインボーカル」と「ハモリ・コーラス」に分解。ハモリだけ WAV で書き出せます。</span>
+        <span class="en">Splits the vocal again into a lead and the harmony or backing parts, and exports the harmony on its own as a WAV.</span></li>
+      <li><b><span class="ja">ハモリの声部分解（実験的）</span><span class="en">Splitting harmony into voices (experimental)</span></b>
+        <span class="ja">ピッチ解析でハモリを「上ハモ / 下ハモ」（2〜4声）に分けます。</span>
+        <span class="en">Uses pitch analysis to separate the harmony into upper and lower lines - two to four voices.</span></li>
+      <li><b><span class="ja">ドラムの細分化（AI）</span><span class="en">Drum breakdown (AI)</span></b>
+        <span class="ja">ドラムをキック / スネア / タム / ハイハット / ライド / クラッシュに分解します。</span>
+        <span class="en">Breaks the kit down into kick, snare, toms, hi-hat, ride and crash.</span></li>
+      <li><b><span class="ja">管楽器の自動判定（AI）</span><span class="en">Horn detection (AI)</span></b>
+        <span class="ja">「その他」の中からサックス等の管楽器を見つけ、独立したトラックとして分離します（OFF にもできます）。</span>
+        <span class="en">Finds saxophones and other horns hiding in the "other" bucket and gives them their own track. Can be turned off.</span></li>
+      <li><b><span class="ja">おまかせモード</span><span class="en">Automatic mode</span></b>
+        <span class="ja">各パートのラウドネス（LUFS）を測って目標バランスへ自動補正し、本格的なミックス処理まで自動で適用します。</span>
+        <span class="en">Measures each part's loudness, corrects it towards a target balance, and applies a full mix chain for you.</span></li>
+      <li><b><span class="ja">じぶんでモード</span><span class="en">Manual mode</span></b>
+        <span class="ja">おまかせの結果から、音量 / 左右 / ミュート / 3バンド EQ /「きらきら✨」などの雰囲気プリセットを自由に調整できます。</span>
+        <span class="en">Start from the automatic result, then adjust level, pan, mute, a three-band EQ and character presets per part.</span></li>
+      <li><b><span class="ja">動画にもどす</span><span class="en">Back into the video</span></b>
+        <span class="ja">MP4 / MOV / MKV / AVI / WEBM を直接読み込んで、音だけ直して書き戻します。映像は再エンコードなしのコピーなので画質そのまま・高速です。</span>
+        <span class="en">Load a video directly, fix only the audio and write it back. The picture is copied without re-encoding, so quality is untouched and it is fast.</span></li>
+      <li><b><span class="ja">複数曲キュー</span><span class="en">Batch queue</span></b>
+        <span class="ja">何曲でも予約して順番に自動分解。処理中のキャンセルもできます。できた曲から順に調整できます。</span>
+        <span class="en">Queue as many songs as you like and let it work through them. You can cancel mid-run and start adjusting finished songs right away.</span></li>
+      <li><b><span class="ja">GPU 対応</span><span class="en">GPU support</span></b>
+        <span class="ja">NVIDIA GPU があれば自動で使用（数十秒／曲）。無い場合も CPU で動きます（数分／曲）。</span>
+        <span class="en">Uses an NVIDIA GPU automatically when present - tens of seconds per song. Without one it still runs on the CPU in a few minutes.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="use">
+  <div class="wrap">
+    <p class="section-title">How to use</p>
+    <h2><span class="ja">つかいかた</span><span class="en">How to use</span></h2>
+    <div class="panel reveal">
+      <ol class="steps">
+        <li><b><span class="ja">きょくをドラッグ&amp;ドロップ</span><span class="en">Drop a song in</span></b><br>
+          <span class="ja">WAV / MP3 / FLAC / OGG などのほか、動画ファイルもそのまま置けます。</span>
+          <span class="en">WAV, MP3, FLAC, OGG and video files all work.</span></li>
+        <li><b><span class="ja">「ばらばらにする♪」を押してまつ</span><span class="en">Press separate and wait</span></b><br>
+          <span class="ja">GPU があれば数十秒、CPU でも数分です。☕</span>
+          <span class="en">Tens of seconds with a GPU, a few minutes on CPU.</span></li>
+        <li><b><span class="ja">ミックスこうぼうで仕上げる</span><span class="en">Finish it in the mix room</span></b><br>
+          <span class="ja">おまかせモードならそのまま「ためしにきく」→「ミックスをかきだす」。じぶんでモードならパートごとに触ってから書き出します。</span>
+          <span class="en">In automatic mode just preview and export. In manual mode, adjust each part first.</span></li>
+        <li><b><span class="ja">ハモリだけほしいときは</span><span class="en">Just want the harmony?</span></b><br>
+          <span class="ja">「🎶 ハモリだけかきだす」を押すと、ハモリ・コーラスだけが WAV で出てきます。</span>
+          <span class="en">Press the harmony-only export and you get the backing parts as their own WAV.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="inside">
+  <div class="wrap">
+    <p class="section-title">Inside</p>
+    <h2><span class="ja">中でやっている処理</span><span class="en">What happens inside</span></h2>
+    <p style="margin-top:0;color:var(--cocoa-soft)">
+      <span class="ja">実際のスタジオや一流プラグインが行っている処理を実装しています。おまかせモードでは下記が自動で、じぶんでモードでは量を手で変えられます。</span>
+      <span class="en">The chain follows what real studios and serious plugins do. Automatic mode applies it for you; manual mode lets you set the amounts.</span>
+    </p>
+
+    <div class="panel reveal">
+      <h3 style="font-weight:400;margin:0 0 6px"><span class="ja">パートごと（チャンネルストリップ）</span><span class="en">Per part (channel strip)</span></h3>
+      <p style="margin:0 0 12px;font-size:.88rem;color:var(--cocoa-soft)">
+        <span class="ja">処理順も実務の定石どおり（定位 → レベラー → ゲート → トランジェント → EQ → 共振抑制 → ディエッサー → コンプ → パラレルコンプ → サチュレーション → ゲイン → パン）。</span>
+        <span class="en">In the usual professional order: placement, leveller, gate, transient, EQ, resonance control, de-esser, compressor, parallel compression, saturation, gain, pan.</span>
+      </p>
+      <table class="spec">
+        <tr><th><span class="ja">ノイズゲート</span><span class="en">Noise gate</span></th>
+            <td><span class="ja">音のない所のカブリ・分離ノイズを掃除（-45dB）</span><span class="en">Cleans bleed and separation artefacts in the gaps</span></td></tr>
+        <tr><th><span class="ja">トランジェントシェイパー</span><span class="en">Transient shaper</span></th>
+            <td><span class="ja">立ち上がりと余韻を独立して増減（差分エンベロープ方式）</span><span class="en">Attack and sustain shaped independently</span></td></tr>
+        <tr><th><span class="ja">ぶつかり自動解消</span><span class="en">Automatic unmasking</span></th>
+            <td><span class="ja">歌を覆っている楽器の帯域を検出し、楽器側を最大3dB削る</span><span class="en">Finds where instruments cover the vocal and dips them by up to 3 dB</span></td></tr>
+        <tr><th><span class="ja">共振抑制</span><span class="en">Resonance control</span></th>
+            <td><span class="ja">曲を通して居座る共振だけを検出して動的に削る</span><span class="en">Detects resonances that sit through the whole song and reduces them dynamically</span></td></tr>
+        <tr><th><span class="ja">ディエッサー</span><span class="en">De-esser</span></th>
+            <td><span class="ja">5.5〜9.5kHz の歯擦音のみ最大7dB抑制（ゼロ位相の帯域分割）</span><span class="en">Up to 7 dB on sibilance between 5.5 and 9.5 kHz, using a zero-phase split</span></td></tr>
+        <tr><th><span class="ja">パラレルコンプ</span><span class="en">Parallel compression</span></th>
+            <td><span class="ja">ニューヨーク式。潰した音を原音に混ぜて密度を出す</span><span class="en">New York style - the squashed signal blended back in for density</span></td></tr>
+        <tr><th><span class="ja">サチュレーション</span><span class="en">Saturation</span></th>
+            <td><span class="ja">4倍オーバーサンプリングでエイリアシングを防止（テープ／真空管）</span><span class="en">Tape and tube flavours, 4x oversampled to avoid aliasing</span></td></tr>
+      </table>
+    </div>
+
+    <div class="panel reveal">
+      <h3 style="font-weight:400;margin:0 0 12px"><span class="ja">マスターバス</span><span class="en">Master bus</span></h3>
+      <table class="spec">
+        <tr><th><span class="ja">グルーコンプ</span><span class="en">Glue compressor</span></th>
+            <td><span class="ja">ミックスをなじませる（ナチュラル1.7:1／パンチ2.2:1、GR 1〜3dB）</span><span class="en">Pulls the mix together, 1 to 3 dB of reduction</span></td></tr>
+        <tr><th><span class="ja">マルチバンドコンプ</span><span class="en">Multiband compressor</span></th>
+            <td><span class="ja">4バンド。帯域別の時定数（低域60ms〜高域4ms）、各帯域 -3〜4dB上限</span><span class="en">Four bands with per-band timing, capped at 3 to 4 dB each</span></td></tr>
+        <tr><th><span class="ja">M/Sステレオ幅・ベースモノ化</span><span class="en">Stereo width and bass mono</span></th>
+            <td><span class="ja">サイドの低域は自動カット。110Hz以下はセンターへ（ゼロ位相分割で位相のにじみなし）</span><span class="en">Lows below 110 Hz are centred with a zero-phase split, so nothing smears</span></td></tr>
+        <tr><th><span class="ja">ラウドネス調整</span><span class="en">Loudness</span></th>
+            <td><span class="ja">-14 LUFS（配信）／-9 LUFS（CD）へ。誤差0.2dB以内に収束</span><span class="en">Targets &minus;14 LUFS for streaming or &minus;9 LUFS for CD, within 0.2 dB</span></td></tr>
+        <tr><th><span class="ja">トゥルーピークリミッター</span><span class="en">True peak limiter</span></th>
+            <td><span class="ja">ITU-R BS.1770-4 準拠の4倍オーバーサンプリング検出＋先読み</span><span class="en">4x oversampled detection to ITU-R BS.1770-4, with lookahead</span></td></tr>
+      </table>
+    </div>
+
+    <div class="panel reveal">
+      <h3 style="font-weight:400;margin:0 0 12px"><span class="ja">品質メーター</span><span class="en">Quality meters</span></h3>
+      <p style="margin:0 0 12px;font-size:.9rem;color:var(--cocoa-soft)">
+        <span class="ja">書き出す前に、しあがりを実際に測って表示します。</span>
+        <span class="en">Before you export, it measures the result and shows you the numbers.</span></p>
+      <table class="spec">
+        <tr><th>LUFS</th><td><span class="ja">体感音量。配信サービスの基準に合っているか</span><span class="en">Perceived loudness against streaming targets</span></td></tr>
+        <tr><th>dBTP</th><td><span class="ja">サンプル間まで含めた真のピーク。MP3変換時の歪みを防ぐ指標</span><span class="en">True peak including between samples - the number that keeps MP3 conversion clean</span></td></tr>
+        <tr><th>LRA</th><td><span class="ja">曲中の音量のばらつき。小さすぎるとのっぺりした音</span><span class="en">How much the level moves across the song</span></td></tr>
+        <tr><th>PLR</th><td><span class="ja">ピークと音量の差。8dB未満だと潰れすぎの目安</span><span class="en">Peak to loudness - under 8 dB usually means it is over-squashed</span></td></tr>
+        <tr><th><span class="ja">相関</span><span class="en">Correlation</span></th>
+            <td><span class="ja">モノ再生との相性。マイナスだとモノで音が消える危険</span><span class="en">Mono compatibility - negative values mean parts vanish in mono</span></td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <p class="section-title">Requirements</p>
+    <h2><span class="ja">動作環境とインストール</span><span class="en">Requirements and install</span></h2>
+    <div class="panel reveal">
+      <table class="spec">
+        <tr><th>OS</th><td>Windows 10 / 11 (64bit)</td></tr>
+        <tr><th><span class="ja">メモリ</span><span class="en">Memory</span></th>
+            <td><span class="ja">8GB 以上を推奨</span><span class="en">8 GB or more recommended</span></td></tr>
+        <tr><th>GPU</th>
+            <td><span class="ja">NVIDIA GPU があれば自動で使用（無くても動きます）</span><span class="en">An NVIDIA GPU is used automatically if you have one; not required</span></td></tr>
+        <tr><th><span class="ja">AIモデル</span><span class="en">AI models</span></th>
+            <td><span class="ja">初回起動時に自動ダウンロード（合計 約1GB／2回目からは不要）。保存先は <code>%LOCALAPPDATA%\BandFixGzzio\models</code></span>
+                <span class="en">Downloaded automatically on first launch, about 1 GB in total, then cached.</span></td></tr>
+      </table>
+    </div>
+    <p class="notice reveal" style="margin-top:16px">
+      <span class="ja">未署名のため、初回起動時に SmartScreen の青い警告が出ることがあります。「詳細情報」→「実行」で進めてください（異常ではありません）。</span>
+      <span class="en">The build is unsigned, so SmartScreen may warn you the first time. Choose "More info" then "Run" - this is expected.</span>
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap inner">
+    <a href="../../">&larr; <span class="ja">ソフト一覧へ</span><span class="en">All apps</span></a>
+    <span>&copy; G'zzio</span>
+    <a href="https://github.com/gzzio1989" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+<script src="../../assets/site.js"></script>
+</body>
+</html>

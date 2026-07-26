@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ディスクグッジオ (DiskGzzio) — G'zzio</title>
+<meta name="description" content="もう使っていないファイルを見つけて、確認してから安全に掃除するWindowsアプリ。音楽プロジェクトや録音には一切触りません。インストール不要。">
+<meta property="og:title" content="ディスクグッジオ (DiskGzzio)">
+<meta property="og:description" content="勝手に消さない、確認してから掃除する。音楽制作のデータには触らないディスク掃除アプリ。">
+<link rel="icon" href="../../assets/icon.png">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="../../assets/site.css">
+<style>:root{--accent:var(--mango);--accent-deep:#9a7215}</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="inner">
+    <a class="brand" href="../../"><img src="../../assets/icon.png" alt=""><b>G'zzio</b></a>
+    <nav>
+      <a href="../../"><span class="ja">ソフト一覧</span><span class="en">Apps</span></a>
+      <a href="#safety"><span class="ja">安全設計</span><span class="en">Safety</span></a>
+      <a href="#use"><span class="ja">つかいかた</span><span class="en">How to use</span></a>
+      <a href="#targets"><span class="ja">対象</span><span class="en">What it checks</span></a>
+      <span class="langbtn">
+        <button type="button" data-lang="ja" aria-pressed="true">日本語</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="prod-hero">
+  <div class="wrap">
+    <span class="ver">v1.0.0 &middot; Windows 10 / 11</span>
+    <h1><span class="ja">ディスクグッジオ</span><span class="en">DiskGzzio</span></h1>
+    <p class="lead">
+      <span class="ja">Windows の「もう使ってないファイル」を自動で見つけて、<b>中身を確認してから</b>安全に掃除するアプリです。
+        音楽プロジェクト・録音・VST・ドキュメントには<b>一切触りません</b>。インストール不要、展開するだけで動きます。</span>
+      <span class="en">Finds the files Windows no longer needs, shows you the list, and cleans up only what you tick.
+        It <b>never touches</b> your projects, recordings, plugins or documents. No installer - just unzip and run.</span>
+    </p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn btn-primary" href="https://github.com/gzzio1989/DiskGzzio/releases/latest" target="_blank" rel="noopener">
+        <span class="ja">ダウンロード</span><span class="en">Download</span></a>
+      <a class="btn btn-ghost" href="#safety"><span class="ja">安全設計を見る</span><span class="en">How it stays safe</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="safety">
+  <div class="wrap">
+    <p class="section-title">Safety</p>
+    <h2><span class="ja">安全設計（いちばん大事なところ）</span><span class="en">How it stays safe</span></h2>
+    <ul class="featlist reveal">
+      <li><b><span class="ja">勝手には消しません</span><span class="en">Nothing happens silently</span></b>
+        <span class="ja">スキャン → 一覧で確認 → ボタンを押して掃除、の順です。押すまで何も起きません。</span>
+        <span class="en">Scan, look at the list, then press the button. Nothing is removed until you do.</span></li>
+      <li><b><span class="ja">既定は「ごみ箱へ移動」</span><span class="en">It moves things to the recycle bin</span></b>
+        <span class="ja">間違えても、ごみ箱から元に戻せます。</span>
+        <span class="en">If you change your mind, everything can be restored.</span></li>
+      <li><b><span class="ja">全部ログに残ります</span><span class="en">Everything is logged</span></b>
+        <span class="ja">消したものは <code>%APPDATA%\DiskGzzio\logs</code> に記録されます。</span>
+        <span class="en">A record of every removal is written to the log folder.</span></li>
+      <li><b><span class="ja">ユーザーデータには触れません</span><span class="en">Your own files are off limits</span></b>
+        <span class="ja">音楽プロジェクト・録音・VST・ドキュメントなどの領域には一切触れません。</span>
+        <span class="en">Projects, recordings, plugins and documents are never in scope.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="use">
+  <div class="wrap">
+    <p class="section-title">How to use</p>
+    <h2><span class="ja">つかいかた（3ステップ）</span><span class="en">Three steps</span></h2>
+    <div class="panel reveal">
+      <ol class="steps">
+        <li><b><span class="ja">起動する</span><span class="en">Start it</span></b><br>
+          <span class="ja"><code>Start_DiskGzzio.bat</code> をダブルクリック。黒い小窓が最小化で開きますが、閉じるとアプリも終わるのでそのままに。</span>
+          <span class="en">Double-click the start batch file. A small console window stays minimised - leave it open, closing it quits the app.</span></li>
+        <li><b><span class="ja">スキャンして確認する</span><span class="en">Scan and review</span></b><br>
+          <span class="ja">「スキャン」→ 一覧の中身を確認 →「選択した項目を掃除する」。</span>
+          <span class="en">Press Scan, read through the list, then clean the items you selected.</span></li>
+        <li><b><span class="ja">空き容量を実際に増やす</span><span class="en">Actually free the space</span></b><br>
+          <span class="ja">「ごみ箱を空にする…」を押します。<b>ここだけ復元できない</b>ので、中身を確認してから。</span>
+          <span class="en">Empty the recycle bin. <b>This step cannot be undone</b>, so check the contents first.</span></li>
+      </ol>
+      <p class="notice" style="margin-top:6px">
+        <span class="ja"><code>C:\Windows\Temp</code> まで掃除したいときは <code>Start_DiskGzzio_Admin.bat</code> で起動してください（UAC の確認が出ます）。</span>
+        <span class="en">To include the Windows temp folder, launch the admin batch file instead - Windows will ask for permission.</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="targets">
+  <div class="wrap">
+    <p class="section-title">Scope</p>
+    <h2><span class="ja">自動判定の対象</span><span class="en">What it looks at</span></h2>
+    <div class="panel reveal">
+      <table class="spec">
+        <tr><th><span class="ja">一時ファイル（ユーザー）</span><span class="en">Temp files (user)</span></th>
+            <td><code>%TEMP%</code> — <span class="ja">7日より前</span><span class="en">older than 7 days</span></td></tr>
+        <tr><th><span class="ja">一時ファイル（Windows）</span><span class="en">Temp files (Windows)</span></th>
+            <td><code>C:\Windows\Temp</code> — <span class="ja">7日より前・管理者起動時のみ</span><span class="en">older than 7 days, admin launch only</span></td></tr>
+        <tr><th><span class="ja">クラッシュダンプ</span><span class="en">Crash dumps</span></th>
+            <td><code>%LOCALAPPDATA%\CrashDumps</code></td></tr>
+        <tr><th><span class="ja">Windowsエラー報告</span><span class="en">Windows error reports</span></th>
+            <td>WER</td></tr>
+        <tr><th><span class="ja">シェーダーキャッシュ</span><span class="en">Shader cache</span></th>
+            <td><span class="ja">D3DSCache / NVIDIA / AMD（使うと自動で再生成されます）</span><span class="en">Rebuilt automatically the next time you need it</span></td></tr>
+        <tr><th><span class="ja">ダウンロード整理候補</span><span class="en">Download candidates</span></th>
+            <td><span class="ja">180日以上未使用。<b>一覧表示のみ・既定は未チェック</b></span><span class="en">Unused for 180 days or more - <b>listed only, never ticked by default</b></span></td></tr>
+      </table>
+    </div>
+    <p class="notice reveal" style="margin-top:16px">
+      <span class="ja">サムネイルキャッシュ、Windows Update の残骸、休止ファイルなどは対象外です。これらは Windows 標準の「ストレージセンサー」が安全に処理してくれるので、併用するのがいちばん確実です。</span>
+      <span class="en">Thumbnail caches, Windows Update leftovers and the hibernation file are deliberately out of scope - Windows' own Storage Sense handles those safely, so use both together.</span>
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap inner">
+    <a href="../../">&larr; <span class="ja">ソフト一覧へ</span><span class="en">All apps</span></a>
+    <span>&copy; G'zzio &middot; MIT License</span>
+    <a href="https://github.com/gzzio1989" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+<script src="../../assets/site.js"></script>
+</body>
+</html>

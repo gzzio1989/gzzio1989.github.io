@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ほんやくブリッジ (Honyaku Bridge) — G'zzio</title>
+<meta name="description" content="相手の声を日本語で読み上げ、こちらの日本語を相手の言葉にして送るリアルタイム音声翻訳プラグイン。SYNCROOM に直接挿せます。">
+<meta property="og:title" content="ほんやくブリッジ (Honyaku Bridge)">
+<meta property="og:description" content="オンラインセッションや配信のための、リアルタイム音声翻訳プラグイン。">
+<link rel="icon" href="../../assets/icon.png">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="../../assets/site.css">
+<style>:root{--accent:var(--soda);--accent-deep:#2c6a8a}</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="inner">
+    <a class="brand" href="../../"><img src="../../assets/icon.png" alt=""><b>G'zzio</b></a>
+    <nav>
+      <a href="../../"><span class="ja">ソフト一覧</span><span class="en">Apps</span></a>
+      <a href="#features"><span class="ja">できること</span><span class="en">Features</span></a>
+      <a href="#use"><span class="ja">つかいかた</span><span class="en">How to use</span></a>
+      <a href="#connect"><span class="ja">つなぎ方</span><span class="en">Wiring</span></a>
+      <span class="langbtn">
+        <button type="button" data-lang="ja" aria-pressed="true">日本語</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="prod-hero">
+  <div class="wrap">
+    <span class="ver">v1.0.1 &middot; VST3 / VST2 / CLAP &middot; Windows</span>
+    <h1><span class="ja">ほんやくブリッジ</span><span class="en">Honyaku Bridge</span></h1>
+    <p class="lead">
+      <span class="ja">相手の声を聞き取って<b>日本語の音声で読み上げ</b>、こちらの日本語を<b>相手の言葉の音声</b>にして送る、
+        リアルタイム音声翻訳プラグインです。オンラインセッションや配信で、言葉が違う人と話すために作りました。</span>
+      <span class="en">A real-time speech translation plugin. It listens to the other person and <b>reads them back to you in Japanese</b>,
+        and turns <b>your Japanese into their language</b> on the way out. Built for talking across languages in online sessions and streams.</span>
+    </p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn btn-primary" href="https://github.com/gzzio1989/HonyakuBridge/releases/latest" target="_blank" rel="noopener">
+        <span class="ja">ダウンロード</span><span class="en">Download</span></a>
+      <a class="btn btn-ghost" href="#use"><span class="ja">つかいかたを見る</span><span class="en">How it works</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <p class="section-title">Features</p>
+    <h2><span class="ja">できること</span><span class="en">What it does</span></h2>
+    <ul class="featlist reveal">
+      <li><b><span class="ja">きく (Listen) モード</span><span class="en">Listen mode</span></b>
+        <span class="ja">相手の声を聞き取り、言語を自動で見分けて、日本語の音声で読み上げます。</span>
+        <span class="en">Picks up the other person, works out what language it is, and speaks it back to you in Japanese.</span></li>
+      <li><b><span class="ja">はなす (Speak) モード</span><span class="en">Speak mode</span></b>
+        <span class="ja">あなたの日本語を、相手の言語に翻訳した音声に変えて送ります。翻訳先は「きくモードが直近に聞き取った言語」に自動で合います。</span>
+        <span class="en">Turns your Japanese into speech in their language. The target follows whatever Listen mode heard most recently.</span></li>
+      <li><b><span class="ja">逐次通訳の方式</span><span class="en">Consecutive, not simultaneous</span></b>
+        <span class="ja">話し終えて0.6秒ほど間が空くと、その発話が翻訳されて数秒後に流れます（同時通訳ではありません）。</span>
+        <span class="en">When you stop for about 0.6 seconds, that phrase is translated and played a few seconds later.</span></li>
+      <li><b><span class="ja">料金はかかりません</span><span class="en">No running cost</span></b>
+        <span class="ja">翻訳と読み上げにインターネットを使いますが、すべて無料サービス構成です。</span>
+        <span class="en">Translation and speech use the internet, but the whole chain runs on free services.</span></li>
+      <li><b><span class="ja">3つの形式で同梱</span><span class="en">Three plugin formats</span></b>
+        <span class="ja">VST3・VST2 (dll)・CLAP を同梱。お使いのソフトが読める形式を入れてください。</span>
+        <span class="en">VST3, VST2 and CLAP are all included - install whichever your host can load.</span></li>
+      <li><b><span class="ja">元の声とのバランス調整</span><span class="en">Balance with the original voice</span></b>
+        <span class="ja">翻訳音声の再生中だけ元の声を下げる「ダッキング」つき。翻訳音声だけを送ることもできます。</span>
+        <span class="en">Ducks the original voice while the translation plays, and you can send only the translation if you prefer.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="use">
+  <div class="wrap">
+    <p class="section-title">How to use</p>
+    <h2><span class="ja">つかいかた</span><span class="en">How to use</span></h2>
+    <p style="margin-top:0;color:var(--cocoa-soft)">
+      <span class="ja">2つのパーツで動きます。<b>補助アプリ</b>（音声認識・翻訳・読み上げの本体）と、<b>プラグイン</b>（音の橋渡し役）です。</span>
+      <span class="en">It comes in two parts: a <b>helper app</b> that does the recognition, translation and speech, and a <b>plugin</b> that carries the audio between them.</span>
+    </p>
+    <div class="panel reveal">
+      <ol class="steps">
+        <li><b><span class="ja">補助アプリを先に入れる</span><span class="en">Install the helper app first</span></b><br>
+          <span class="ja"><code>server</code> フォルダを好きな場所にコピーして <code>setup.bat</code> をダブルクリック。Python が無ければ自動で案内が出ます。</span>
+          <span class="en">Copy the <code>server</code> folder anywhere and run <code>setup.bat</code>. It offers to install Python if you do not have it.</span></li>
+        <li><b><span class="ja">プラグインを入れる</span><span class="en">Install the plugin</span></b><br>
+          <span class="ja"><code>HonyakuBridge.vst3</code> を<b>フォルダごと</b> <code>C:\Program Files\Common Files\VST3\</code> へ。同梱の <code>install_vst3.bat</code> を管理者として実行してもOK。</span>
+          <span class="en">Copy the <code>HonyakuBridge.vst3</code> <b>folder</b> into your VST3 directory, or run the bundled installer batch as administrator.</span></li>
+        <li><b><span class="ja">補助アプリを起動しておく</span><span class="en">Leave the helper running</span></b><br>
+          <span class="ja"><code>start.bat</code> を実行。初回だけ音声認識モデル（約500MB）のダウンロードで数分かかります。「プラグインの接続を待っています…」と出たら準備完了。<b>使う間はこの窓を開いたまま</b>に。</span>
+          <span class="en">Run <code>start.bat</code>. The first launch downloads a speech model of about 500 MB. Keep the window open while you use it.</span></li>
+        <li><b><span class="ja">モードを選ぶ</span><span class="en">Pick a mode</span></b><br>
+          <span class="ja">プラグインの <code>Mode</code> を「きく」か「はなす」に。あとは普通に話すだけです。</span>
+          <span class="en">Set the plugin's <code>Mode</code> to Listen or Speak, then just talk.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="connect">
+  <div class="wrap">
+    <p class="section-title">Wiring</p>
+    <h2><span class="ja">つなぎ方</span><span class="en">How to wire it up</span></h2>
+
+    <div class="panel reveal">
+      <h3 style="font-weight:400;margin:0 0 10px">SYNCROOM (Ver.2)</h3>
+      <p style="margin:0;font-size:.94rem;color:var(--cocoa-soft)">
+        <span class="ja">SYNCROOM Ver.2 は VST3 プラグインを直接挿せます。<b>はなす</b>なら、オーディオ設定のマイク入力に挿して Mode を Speak に。
+          それだけで、あなたの日本語が相手の言語の音声になって流れます。</span>
+        <span class="en">SYNCROOM Ver.2 loads VST3 plugins directly. For <b>Speak</b>, insert it on the mic input and set the mode - your Japanese goes out in their language.</span>
+      </p>
+    </div>
+
+    <div class="panel reveal">
+      <h3 style="font-weight:400;margin:0 0 10px">
+        <span class="ja">Discord / REALITY / Cluster など（VSTを挿せないアプリ）</span>
+        <span class="en">Discord, REALITY, Cluster and other apps that cannot load plugins</span></h3>
+      <p style="margin:0 0 10px;font-size:.94rem;color:var(--cocoa-soft)">
+        <span class="ja">無料の VST ホスト（Cantabile Lite、Element など）と仮想オーディオケーブル（VB-CABLE など）で音を経由させます。</span>
+        <span class="en">Route the audio through a free VST host such as Cantabile Lite or Element, plus a virtual audio cable such as VB-CABLE.</span>
+      </p>
+      <p style="margin:0;font-size:.88rem">
+        <a href="https://www.cantabilesoftware.com/free-vst-host" target="_blank" rel="noopener">Cantabile Lite</a> &middot;
+        <a href="https://kushview.net/element/" target="_blank" rel="noopener">Element</a> &middot;
+        <a href="https://vb-audio.com/Cable/" target="_blank" rel="noopener">VB-CABLE</a>
+      </p>
+    </div>
+
+    <div class="panel reveal">
+      <h3 style="font-weight:400;margin:0 0 12px"><span class="ja">プラグインのつまみ</span><span class="en">Plugin parameters</span></h3>
+      <table class="spec">
+        <tr><th>Mode</th><td><span class="ja">きく（相手→日本語）／はなす（日本語→相手）</span><span class="en">Listen (partner to Japanese) or Speak (Japanese to partner)</span></td></tr>
+        <tr><th>TTS Volume</th><td><span class="ja">翻訳音声の音量（0〜2）</span><span class="en">Volume of the translated speech</span></td></tr>
+        <tr><th>Original Volume</th><td><span class="ja">元の声の音量。はなすモードで 0 にすると翻訳音声だけが相手に届きます</span><span class="en">Volume of the original voice. Set to 0 in Speak mode to send only the translation</span></td></tr>
+        <tr><th>Duck Amount</th><td><span class="ja">翻訳音声の再生中、元の声をどれだけ下げるか</span><span class="en">How much the original voice drops while the translation plays</span></td></tr>
+        <tr><th>Send Audio</th><td><span class="ja">オフにすると音声を補助アプリへ送りません（一時停止・プライバシー用）</span><span class="en">Turn off to stop sending audio to the helper - for pauses and privacy</span></td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap inner">
+    <a href="../../">&larr; <span class="ja">ソフト一覧へ</span><span class="en">All apps</span></a>
+    <span>&copy; G'zzio</span>
+    <a href="https://github.com/gzzio1989" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+<script src="../../assets/site.js"></script>
+</body>
+</html>

@@ -50,6 +50,21 @@ assets/puniguji.png            マスコット（ぷにぐじ）
 
 `assets/site.css` と `assets/site.js` は触らなくて大丈夫です。
 
+## ダウンロードカウンター
+
+カード・製品ページの「これまでのダウンロード」は、GitHub Releases の全ファイルの
+ダウンロード数合計を **表示時にブラウザが取得** しています（`assets/site.js`）。
+
+- 仕組み: `data-dlrepo="gzzio1989/リポジトリ名"` を持つ要素に数字が入ります
+- リリースがまだ無い・APIが混んでいる・オフラインのときは**丸ごと非表示**（嘘の0を出さない）
+- 同じリポジトリは1回だけ取得し、1時間はブラウザが憶えます
+- **新しい製品にも付けたいとき**: カードの `<div class="actions">` の上にこれをコピーするだけ
+
+```html
+<p class="dl" data-dlrepo="gzzio1989/新リポジトリ名"><b class="dl-num">0</b>
+  <span class="cap"><span class="ja">これまでのダウンロード</span><span class="en">downloads to date</span></span></p>
+```
+
 ## フォントのサブセットを作り直す
 
 `assets/MochiyPopOne.ttf` は**このサイトに出てくる文字だけ**を残した軽量版です。

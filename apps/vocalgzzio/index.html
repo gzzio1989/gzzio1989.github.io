@@ -258,14 +258,14 @@ footer a{color:var(--berry)}
     <div>
       <p class="eyebrow"><span class="ja">Windows VST3 ＋ 単体起動アプリ</span><span class="en">Windows VST3 and standalone app</span></p>
       <h1><span class="ja">ボーカルグッジオ</span><span class="en">VocalGzzio</span>
-        <span class="sub">VocalGzzio v2.3.0</span></h1>
+        <span class="sub">VocalGzzio v2.5.0</span></h1>
       <p class="lead">
         <span class="ja">歌もトークも、これ一本で。声を整えて、音程を直して、遊べる。配信でもそのまま使える遅延ゼロ設計のボーカルチャンネルストリップです。</span>
         <span class="en">One plugin for singing and talking. Clean up the voice, fix the pitch, then play with it — a vocal channel strip that adds no latency, so you can leave it on while you stream.</span>
       </p>
       <div class="cta">
         <a class="btn btn-primary" href="https://github.com/gzzio1989/VocalGzzio/releases/latest">
-          <span class="ja">v2.3.0 をダウンロード</span><span class="en">Download v2.3.0</span></a>
+          <span class="ja">v2.5.0 をダウンロード</span><span class="en">Download v2.5.0</span></a>
         <a class="btn btn-ghost" href="#history">
           <span class="ja">更新履歴を見る</span><span class="en">See the changelog</span></a>
       </div>
@@ -406,8 +406,8 @@ footer a{color:var(--berry)}
     </p>
     <ol class="steps">
       <li><h3><span class="ja">セットアップを実行する</span><span class="en">Run the setup</span></h3>
-        <p><span class="ja">Releases から <code>VocalGzzio_Setup_v2.3.0.exe</code> をダウンロードして開きます。</span>
-           <span class="en">Download <code>VocalGzzio_Setup_v2.3.0.exe</code> from Releases and open it.</span></p></li>
+        <p><span class="ja">Releases から <code>VocalGzzio_Setup_v2.5.0.exe</code> をダウンロードして開きます。</span>
+           <span class="en">Download <code>VocalGzzio_Setup_v2.5.0.exe</code> from Releases and open it.</span></p></li>
       <li><h3><span class="ja">SmartScreen の警告を通過する</span><span class="en">Get past SmartScreen</span></h3>
         <p><span class="ja">青い画面が出たら「詳細情報」→「実行」。現在は未署名のためで、異常ではありません（署名を準備中です）。</span>
            <span class="en">If the blue screen appears, choose "More info" then "Run anyway". The installer is not signed yet - that is the only reason for the warning, and signing is being set up.</span></p></li>
@@ -481,6 +481,30 @@ footer a{color:var(--berry)}
 
     <ol class="history">
       <li class="rel now">
+        <span class="ver">v2.5.0</span>
+        <h3><span class="ja">新ツマミ3つ（なめらか・マイク音量・音量キープ）と、10秒おまかせ</span><span class="en">Three new knobs, and the 10-second auto setup</span></h3>
+        <ul>
+          <li><span class="ja"><b>新ツマミ「なめらか」（動的レゾナンス抑制）。</b>耳にささる周波数だけを自動で見つけて、出た瞬間だけ削ります。音程が動いても追いかけ、声の芯は残します。もちろん遅延ゼロのままです。「3 音色をつくる」の先頭にあります。</span>
+              <span class="en"><b>New knob: SMOOTH (dynamic resonance suppression).</b> It finds only the frequencies that sting the ear and cuts them just while they ring, tracking as your pitch moves - still with zero added latency. You will find it first in the TONE section.</span></li>
+          <li><span class="ja"><b>新ツマミ「マイク音量」と「音量キープ」。</b>マイク音量は、ぜんぶの処理のいちばん手前で声の大きさを合わせる入力ツマミです（±24dB）。音量キープは、フレーズごとのゆっくりした音量差を自動のフェーダーさばきで整えます（±9dB・無音では動きません）。いわゆる Vocal Rider 相当で、これも遅延ゼロです。かんたんモードはマイク音量が加わって8ツマミになりました。</span>
+              <span class="en"><b>New knobs: MIC VOL and VOL KEEP.</b> MIC VOL trims your input level at the very start of the chain (&plusmn;24 dB). VOL KEEP rides an invisible fader to even out slow, phrase-level volume drift (&plusmn;9 dB, frozen on silence) - a Vocal Rider equivalent, still zero-latency. Easy mode now shows eight knobs.</span></li>
+          <li><span class="ja"><b>かんたんモードの「うた自動」は10秒のワンボタンになりました。</b>画面中央の大きなボタンを押すと、2秒しずかに（ノイズ学習）→ 8秒うたう（声の解析）を一度で終わらせます。ボタンに残り時間が出るので、合図に合わせるだけです。</span>
+              <span class="en"><b>Easy mode's Auto button now does everything in ten seconds.</b> Press the big centred button: two quiet seconds for noise learning, then eight seconds of singing for the voice analysis, with a live countdown on the button.</span></li>
+        </ul>
+      </li>
+      <li class="rel">
+        <span class="ver">v2.4.0</span>
+        <h3><span class="ja">かんたんモードを作り直しました</span><span class="en">Easy mode, rebuilt</span></h3>
+        <ul>
+          <li><span class="ja"><b>「かんたん／こだわり」ボタンを廃止</b>し、ヘッダーの大きな <b>かんたんモードのスイッチ</b>ひとつにまとめました。押すまでどちらのモードか分からない、ということが無くなります。</span>
+              <span class="en">The old label-swapping button is gone. One large Easy-mode switch in the header now shows the state at a glance.</span></li>
+          <li><span class="ja"><b>かんたんモードが本当に簡単になりました。</b>よく使う7つのツマミ（ノイズ除去・こもり・キンキン・ならし圧縮・サ行おさえ・ひびき・エフェクト量）だけを、画面いっぱいの大きなツマミで表示します。EQとエフェクトの列はまるごと隠れます。</span>
+              <span class="en">Easy mode now shows only seven knobs, big and full width. The EQ and effects column is hidden entirely.</span></li>
+          <li><span class="ja">テーマは一列に並べ直しました（ふつう／ゆるふわ／自然／ブランド／色覚／軽量）。<b>オーロラは廃止</b>し、その席をスイッチに譲っています。オーロラを選んでいた場合はゆるふわで開きます。</span>
+              <span class="en">Themes are now a single row. Aurora has been retired to make room for the switch; existing Aurora users open in Yuru-fuwa.</span></li>
+        </ul>
+      </li>
+      <li class="rel">
         <span class="ver">v2.3.0</span>
         <h3><span class="ja">ポップ・リップ除去と、Cubase が終了できない問題の修正</span><span class="en">Plosive and click removal, and the Cubase shutdown fix</span></h3>
         <ul>

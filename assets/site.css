@@ -245,6 +245,18 @@ footer.site a{color:var(--cocoa-soft);text-decoration:none}
 footer.site a:hover{color:var(--berry);text-decoration:underline}
 footer.site .sp{margin-left:auto}
 
+/* ================= ダウンロードカウンター ================= */
+/* data-dlrepo を持つ要素。数字が取れるまでは非表示(嘘の0を見せない) */
+.dl{display:none;align-items:center;gap:8px;margin:-4px 0 14px}
+.dl.on{display:inline-flex}
+.dl .dl-num{font-size:1.12rem;line-height:1;color:var(--berry);font-variant-numeric:tabular-nums}
+.dl .cap{font-size:.76rem;color:var(--cocoa-soft);line-height:1.3}
+/* 製品ページのヒーローでは、ひと回り大きいピルにする */
+.dl-hero{margin:16px 0 0;padding:10px 20px;border-radius:999px;
+  background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow)}
+.dl-hero .dl-num{font-size:1.5rem}
+.dl-hero .cap{font-size:.83rem}
+
 /* ================= 出現アニメ（動きを減らす設定は尊重） ================= */
 /* JSが動くときだけ隠してから出す。JS無効・観測が走らない場合でも
    中身が消えないよう、html.js が付いているときに限定する。 */

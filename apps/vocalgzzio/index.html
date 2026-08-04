@@ -258,14 +258,14 @@ footer a{color:var(--berry)}
     <div>
       <p class="eyebrow"><span class="ja">Windows VST3 ＋ 単体起動アプリ</span><span class="en">Windows VST3 and standalone app</span></p>
       <h1><span class="ja">ボーカルグッジオ</span><span class="en">VocalGzzio</span>
-        <span class="sub">VocalGzzio v2.8.0</span></h1>
+        <span class="sub">VocalGzzio v2.8.1</span></h1>
       <p class="lead">
         <span class="ja">歌もトークも、これ一本で。声を整えて、音程を直して、遊べる。配信でもそのまま使える遅延ゼロ設計のボーカルチャンネルストリップです。</span>
         <span class="en">One plugin for singing and talking. Clean up the voice, fix the pitch, then play with it — a vocal channel strip that adds no latency, so you can leave it on while you stream.</span>
       </p>
       <div class="cta">
         <a class="btn btn-primary" href="https://github.com/gzzio1989/VocalGzzio/releases/latest">
-          <span class="ja">v2.8.0 をダウンロード</span><span class="en">Download v2.8.0</span></a>
+          <span class="ja">v2.8.1 をダウンロード</span><span class="en">Download v2.8.1</span></a>
         <a class="btn btn-ghost" href="#history">
           <span class="ja">更新履歴を見る</span><span class="en">See the changelog</span></a>
       </div>
@@ -406,8 +406,8 @@ footer a{color:var(--berry)}
     </p>
     <ol class="steps">
       <li><h3><span class="ja">セットアップを実行する</span><span class="en">Run the setup</span></h3>
-        <p><span class="ja">Releases から <code>VocalGzzio_Setup_v2.8.0.exe</code> をダウンロードして開きます。</span>
-           <span class="en">Download <code>VocalGzzio_Setup_v2.8.0.exe</code> from Releases and open it.</span></p></li>
+        <p><span class="ja">Releases から <code>VocalGzzio_Setup_v2.8.1.exe</code> をダウンロードして開きます。</span>
+           <span class="en">Download <code>VocalGzzio_Setup_v2.8.1.exe</code> from Releases and open it.</span></p></li>
       <li><h3><span class="ja">SmartScreen の警告を通過する</span><span class="en">Get past SmartScreen</span></h3>
         <p><span class="ja">青い画面が出たら「詳細情報」→「実行」。現在は未署名のためで、異常ではありません（署名を準備中です）。</span>
            <span class="en">If the blue screen appears, choose "More info" then "Run anyway". The installer is not signed yet - that is the only reason for the warning, and signing is being set up.</span></p></li>
@@ -481,6 +481,18 @@ footer a{color:var(--berry)}
 
     <ol class="history">
       <li class="rel now">
+        <span class="ver">v2.8.1</span>
+        <h3><span class="ja">長時間の「ジー」への対策 — 調査と保険</span><span class="en">Countermeasures for the long-session buzz - investigation and insurance</span></h3>
+        <ul>
+          <li><span class="ja"><b>「長い時間使うとジーが走る」というご報告を受けた回です。</b>最有力の原因は、v2.8.0で直した「音声処理の中の毎回のメモリ確保」でした。締め切り2.8ms（124サンプル）の処理に数十回のmalloc/freeが走っており、確保がたまに遅れるとブロックが落ち、連続するとブロック周期（約355Hz）の「ジー」に聞こえます。ヒープはセッションが長いほど荒れるため「長時間で出る」とも合います。</span>
+              <span class="en"><b>This release follows up a report of a buzz creeping in after hours of use.</b> The prime suspect is the per-block heap allocation fixed in v2.8.0: dozens of malloc/free calls inside a 2.8 ms deadline. A slow allocation drops a block, and repeated drops at the ~355 Hz block rate sound exactly like a buzz - worse as the session heap ages.</span></li>
+          <li><span class="ja"><b>長時間シミュレーションを新設しました。</b>ハム除去に歌＋本物のハムを20分（息継ぎの残りカスは序盤-63.4dB→終盤-66.1dBで悪化なし）、ボイス変換に8分、内部発振器に6時間ぶん（振幅ずれ3.6e-7）。<b>音の処理そのものは長時間でも劣化しない</b>ことを数値で確認しています。</span>
+              <span class="en"><b>A new long-run simulation</b> feeds the hum remover 20 minutes of singing plus real hum (gap residue -63.4 dB early vs -66.1 dB late - no build-up), the voice changer 8 minutes, and the internal oscillators 6 hours' worth (amplitude drift 3.6e-7). The DSP itself does not degrade over time.</span></li>
+          <li><span class="ja"><b>保険をふたつ。</b>ジー音の内部状態が万一壊れたら0.1秒で自動的に作り直す自己回復を追加。インストーラも、上書き時に古いVST3バンドルを消してから入れるようにしました（「新しい版を入れたのに画面の版表示が古いまま」の一因を断つため）。</span>
+              <span class="en"><b>Two pieces of insurance.</b> The hum remover now self-heals within 0.1 s if its state is ever corrupted, and the installer wipes the old VST3 bundle before copying the new one - closing one path to "I installed the update but the version label is still old".</span></li>
+        </ul>
+      </li>
+      <li class="rel">
         <span class="ver">v2.8.0</span>
         <h3><span class="ja">つかいやすさと安定性 — ひと回り点検して18個直しました</span><span class="en">Usability and stability - one full pass, 18 fixes</span></h3>
         <ul>

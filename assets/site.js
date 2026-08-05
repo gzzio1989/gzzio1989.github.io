@@ -31,8 +31,11 @@
 
     // ---- ダウンロードカウンター ----
     // data-dlrepo="owner/repo" を持つ要素に、GitHub Releases の合計DL数を入れる。
-    // 取得できない間(未リリース・制限・オフライン)は非表示のまま = 嘘の数字を出さない。
-    // 同じリポジトリは1回だけ取得し、1時間は sessionStorage に憶えさせる。
+    //   ・数えるのは「自分でアップロードしたファイル」のダウンロード数。
+    //     GitHub が自動で付ける Source code (zip) は API に出てこないので数えられない。
+    //   ・一度取れた数字は localStorage に残すので、次からは通信が失敗しても消えない。
+    //   ・出せないときは理由をブラウザのコンソール(F12)に日本語で出す。
+    //     「カウンターが出ない」ときは、まずそこを見れば原因がわかる。
     (function () {
       var els = document.querySelectorAll('[data-dlrepo]');
       if (!els.length || !window.fetch) return;
@@ -58,23 +61,56 @@
           requestAnimationFrame(step);
         })(list[j]);
       }
-      for (var repo in byRepo) (function (repo) {
-        var key = 'gzzio-dl-' + repo, hit = null;
-        try { hit = JSON.parse(sessionStorage.getItem(key) || 'null'); } catch (e) {}
-        if (hit && Date.now() - hit.t < 3600e3) { show(byRepo[repo], hit.n); return; }
+      // 憶えた値は localStorage に置く(sessionStorage だとタブを閉じるたびに消えて、
+      // GitHub の回数制限に当たった日は数字がまるごと消えてしまう)。
+      var LOG = "[G'zzio DL] ";
+      function load (repo) {
+        try { return JSON.parse(localStorage.getItem('gzzio-dl-' + repo) || 'null'); }
+        catch (e) { return null; }
+      }
+      function save (repo, n) {
+        try { localStorage.setItem('gzzio-dl-' + repo, JSON.stringify({ t: Date.now(), n: n })); }
+        catch (e) {}
+      }
+
+      Object.keys(byRepo).forEach(function (repo) {
+        var hit = load(repo);
+        // 前に取れた数字があるなら、まず先に出す。通信が失敗しても数字は消えない。
+        if (hit && typeof hit.n === 'number') show(byRepo[repo], hit.n);
+        // 1時間以内に取った値ならそれで十分(APIを叩かない)
+        if (hit && Date.now() - hit.t < 3600e3) {
+          console.log(LOG + repo + ' = ' + hit.n + '（1時間以内に取得した値）');
+          return;
+        }
         fetch('https://api.github.com/repos/' + repo + '/releases?per_page=100')
-          .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-          .then(function (rels) {
-            var total = 0;
-            (rels || []).forEach(function (rel) {
-              (rel.assets || []).forEach(function (a) { total += a.download_count || 0; });
-            });
-            if (!total) return;
-            try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), n: total })); } catch (e) {}
-            show(byRepo[repo], total);
+          .then(function (r) {
+            if (!r.ok) throw new Error('GitHub から HTTP ' + r.status
+                        + (r.status === 403 ? '（1時間あたりの回数制限の可能性）' : ''));
+            return r.json();
           })
-          .catch(function () { /* 取れないときは静かに非表示のまま */ });
-      })(repo);
+          .then(function (rels) {
+            if (!Array.isArray(rels)) throw new Error('予期しない応答');
+            if (!rels.length) { console.log(LOG + repo + ' → リリースがまだありません'); return; }
+            var total = 0, files = 0;
+            rels.forEach(function (rel) {
+              (rel.assets || []).forEach(function (a) { files++; total += a.download_count || 0; });
+            });
+            // GitHub が自動で付ける「Source code (zip)」は assets に入らないので数えられない。
+            // 自分でアップロードしたファイルが1つも無いリポジトリは、そもそも数えようがない。
+            if (!files) {
+              console.log(LOG + repo + ' → アップロードされたファイルがありません'
+                        + '（GitHub 自動の Source code zip は集計対象外です）');
+              return;
+            }
+            save(repo, total);
+            show(byRepo[repo], total);
+            console.log(LOG + repo + ' = ' + total + '（ファイル' + files + '個の合計）');
+          })
+          .catch(function (e) {
+            console.log(LOG + repo + ' → 取得できませんでした: ' + e.message
+                      + (hit ? '（前回の値を表示中）' : '（表示しません）'));
+          });
+      });
     })();
 
     // ---- スクロールで要素をふわっと出す ----

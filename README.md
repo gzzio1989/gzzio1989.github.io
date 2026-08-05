@@ -15,10 +15,10 @@
 
 ```
 index.html                     入口ページ（製品カードを並べたもの）
-apps/vocalgzzio/index.html     ボーカルグッジオ
-apps/bandfixgzzio/index.html   バンドフィックスグッジオ
-apps/honyakubridge/index.html  ほんやくブリッジ
-apps/diskgzzio/index.html      ディスクグッジオ
+apps/vocalgzzio/index.html     ボーカルグッジオ      ← 入口に掲載
+apps/bandfixgzzio/index.html   バンドフィックスグッジオ ← 入口に掲載
+apps/honyakubridge/index.html  ほんやくブリッジ      ← いまは入口に載せていない
+apps/diskgzzio/index.html      ディスクグッジオ      ← いまは入口に載せていない
 assets/site.css                共通スタイル（配色・カード・ボタン）
 assets/site.js                 共通スクリプト（日英切替・出現アニメ）
 assets/MochiyPopOne.ttf        表示用フォント（サイトの文字だけのサブセット）
@@ -38,6 +38,16 @@ assets/puniguji.png            マスコット（ぷにぐじ）
 製品ページの**原本は `gzzio1989/VocalGzzio` リポジトリの `docs/index.html`** です。
 リリースのたびにそちらを更新し、**このリポジトリの `apps/vocalgzzio/index.html` へコピー**してください
 （1ファイル完結・外部ファイル参照ゼロなので、コピーするだけで動きます）。
+
+### いま入口に載せている製品について
+
+入口ページ（`index.html`）に並べているのは **ボーカルグッジオ / バンドフィックスグッジオ の2つだけ**です。
+ほんやくブリッジとディスクグッジオの**ページ自体は残してあります**（消していません）。
+直接 URL（`/apps/honyakubridge/` など）を開けば表示されます。
+
+- **また入口に載せたくなったら**: `index.html` の `<div class="cards">` の中に
+  `<article class="card">` を1つ足すだけです（下の「製品を追加するとき」を参照）。
+- **完全に消したいときは**: そのフォルダごと削除してください。
 
 ## 製品を追加するとき
 

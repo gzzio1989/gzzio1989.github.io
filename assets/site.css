@@ -222,6 +222,12 @@ table.spec th,table.spec td{
 table.spec th{width:34%;color:var(--cocoa);font-weight:400;white-space:nowrap}
 table.spec td{color:var(--cocoa-soft)}
 table.spec tr:last-child th,table.spec tr:last-child td{border-bottom:0}
+/* スマホでは項目名の折り返しを許す。nowrap のままだと表が画面より広くなり、
+   ページ全体が横スクロールしてしまう(実測: 画面390pxで表が424px＝34pxはみ出し)。 */
+@media(max-width:600px){
+  table.spec th{white-space:normal;width:38%}
+  table.spec th,table.spec td{padding:8px 8px}
+}
 
 code{
   background:var(--blush);border-radius:6px;padding:1px 6px;

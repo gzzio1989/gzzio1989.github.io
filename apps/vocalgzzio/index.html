@@ -258,14 +258,14 @@ footer a{color:var(--berry)}
     <div>
       <p class="eyebrow"><span class="ja">Windows VST3 ＋ 単体起動アプリ</span><span class="en">Windows VST3 and standalone app</span></p>
       <h1><span class="ja">ボーカルグッジオ</span><span class="en">VocalGzzio</span>
-        <span class="sub">VocalGzzio v2.8.1</span></h1>
+        <span class="sub">VocalGzzio v2.9.0</span></h1>
       <p class="lead">
         <span class="ja">歌もトークも、これ一本で。声を整えて、音程を直して、遊べる。配信でもそのまま使える遅延ゼロ設計のボーカルチャンネルストリップです。</span>
         <span class="en">One plugin for singing and talking. Clean up the voice, fix the pitch, then play with it — a vocal channel strip that adds no latency, so you can leave it on while you stream.</span>
       </p>
       <div class="cta">
         <a class="btn btn-primary" href="https://github.com/gzzio1989/VocalGzzio/releases/latest">
-          <span class="ja">v2.8.1 をダウンロード</span><span class="en">Download v2.8.1</span></a>
+          <span class="ja">v2.9.0 をダウンロード</span><span class="en">Download v2.9.0</span></a>
         <a class="btn btn-ghost" href="#history">
           <span class="ja">更新履歴を見る</span><span class="en">See the changelog</span></a>
       </div>
@@ -406,8 +406,8 @@ footer a{color:var(--berry)}
     </p>
     <ol class="steps">
       <li><h3><span class="ja">セットアップを実行する</span><span class="en">Run the setup</span></h3>
-        <p><span class="ja">Releases から <code>VocalGzzio_Setup_v2.8.1.exe</code> をダウンロードして開きます。</span>
-           <span class="en">Download <code>VocalGzzio_Setup_v2.8.1.exe</code> from Releases and open it.</span></p></li>
+        <p><span class="ja">Releases から <code>VocalGzzio_Setup_v2.9.0.exe</code> をダウンロードして開きます。</span>
+           <span class="en">Download <code>VocalGzzio_Setup_v2.9.0.exe</code> from Releases and open it.</span></p></li>
       <li><h3><span class="ja">SmartScreen の警告を通過する</span><span class="en">Get past SmartScreen</span></h3>
         <p><span class="ja">青い画面が出たら「詳細情報」→「実行」。現在は未署名のためで、異常ではありません（署名を準備中です）。</span>
            <span class="en">If the blue screen appears, choose "More info" then "Run anyway". The installer is not signed yet - that is the only reason for the warning, and signing is being set up.</span></p></li>
@@ -481,6 +481,20 @@ footer a{color:var(--berry)}
 
     <ol class="history">
       <li class="rel now">
+        <span class="ver">v2.9.0</span>
+        <h3><span class="ja">セッションモード — 追加遅延を0サンプルに固定</span><span class="en">Session mode - added latency pinned at 0 samples</span></h3>
+        <ul>
+          <li><span class="ja"><b>「低遅延」ボタンを廃止しました。</b>あれはピッチ系の遅延を768→384サンプル（17.4→8.7ms）に半分にするものでしたが、オンラインセッションで快適とされる往復30msは<b>ネットとパソコンを通した合計の実測値</b>です。オーディオインターフェースのAD/DAとバッファだけで7〜8ms使うので、プラグインに許される追加遅延は実質ゼロ。つまり8.7msは「半分になった」のではなく<b>まだ足りない</b>のに、低い声のざらつきという代償だけが残っていました。</span>
+              <span class="en"><b>The Low Latency button is gone.</b> It halved the pitch-tool delay from 768 to 384 samples (17.4 to 8.7 ms), but the 30 ms round trip that feels comfortable in an online jam is measured <b>across the network and the computer</b>. Your interface alone eats 7-8 ms, so the budget left for a plug-in is effectively zero. 8.7 ms was not "half the problem" - it was still too much, and you paid for it with grainier low notes.</span></li>
+          <li><span class="ja"><b>かわりに「セッション」スイッチを付けました。</b>ONの間は、遅延をふやす3つ（ピッチ補正・ボイス変換・ハモリ／5人ユニゾン）を素通しにして、<b>追加遅延を0サンプルに固定</b>します。スイッチの値そのものは変えないので、セッションを抜ければ元どおり鳴ります。止めている間はその3つのツマミが<b>灰色</b>になるので、「見えているのに効いていない」になりません。</span>
+              <span class="en"><b>In its place there is a Session switch.</b> While it is on, the three tools that add delay - pitch correction, voice change and harmony/unison - are bypassed and <b>added latency is pinned at 0 samples</b>. The switch does not touch their values, so leaving session mode brings everything back. Those controls grey out while suspended, so nothing looks active while being silent.</span></li>
+          <li><span class="ja"><b>「追加遅延 +0.0 ms」を画面に常時表示します。</b>ゼロ遅延は宣伝文句ではなく測った数字なので、隠さず出すことにしました。0なら緑、足していれば黄色。再生中にピッチ補正をONにすればその場で+17.4msに変わります（申告値ではなく、<b>いま実際に遅れている値</b>です）。</span>
+              <span class="en"><b>An "added latency" badge is now always on screen.</b> Zero latency is a measured number here, not a slogan, so the number is shown: green at zero, amber when something is adding delay. Switch on pitch correction mid-playback and it jumps to +17.4 ms straight away - it reports what you are actually hearing, not what was declared at load time.</span></li>
+          <li><span class="ja"><b>バグを1件直しました：ハモリだけONにすると歌だけ17.4ms走っていました。</b>ハモリ（5人ユニゾン）だけをONにすると、プラグインはホストへ「768サンプル遅れます」と申告するのに、実測すると主メロのピークは<b>0サンプル</b>＝まったく遅れていませんでした。ハモリは主メロの横に声を足す並列処理なので、主メロは遅れません。申告だけが嘘をついていたため、DAWがトラックを17.4ms前へ引っ張って<b>歌だけ走り</b>、さらにMixの原音そろえも同じ値を見ていたので<b>ハモリのときだけコムフィルタ（スカスカ）が再発</b>していました。</span>
+              <span class="en"><b>One bug fixed: harmony alone made the lead vocal run 17.4 ms early.</b> With only harmony/unison enabled, the plug-in told the host it had 768 samples of latency - but the measured peak of the lead vocal was at <b>0 samples</b>. Harmony adds voices beside the lead; it never delays the lead itself. The host believed the false report and pulled the track 17.4 ms early, and because the dry-mix alignment read the same value, the comb filter fixed in v2.8.0 came back whenever harmony was used.</span></li>
+        </ul>
+      </li>
+      <li class="rel">
         <span class="ver">v2.8.1</span>
         <h3><span class="ja">長時間の「ジー」への対策 — 調査と保険</span><span class="en">Countermeasures for the long-session buzz - investigation and insurance</span></h3>
         <ul>

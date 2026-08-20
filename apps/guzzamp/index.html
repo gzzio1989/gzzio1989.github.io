@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ガッズアンプ クリーミードライブ DI (GuzzAmp Creamy Drive DI) — G'zzio</title>
+<meta name="description" content="ベース用のプリアンプ / DI プラグイン。真空管が倍音を作る仕組みそのものを式から実装しました。VST3 / CLAP / VST2、Windows / Linux。">
+<meta property="og:title" content="GuzzAmp Creamy Drive DI">
+<meta property="og:description" content="ベース用プリアンプ / DI。真空管の物理から歪みを作り直した v1.9。VST3 / CLAP / VST2。">
+<link rel="icon" href="../../assets/icon.png">
+<script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="../../assets/site.css">
+<style>:root{--accent:var(--mango);--accent-deep:#a8730d}</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="inner">
+    <a class="brand" href="../../"><img src="../../assets/icon.png" alt=""><b>G'zzio</b></a>
+    <nav>
+      <a href="../../"><span class="ja">ソフト一覧</span><span class="en">Apps</span></a>
+      <a href="#features"><span class="ja">できること</span><span class="en">Features</span></a>
+      <a href="#inside"><span class="ja">中身の処理</span><span class="en">Inside</span></a>
+      <a href="#env"><span class="ja">動作環境</span><span class="en">Requirements</span></a>
+      <span class="langbtn">
+        <button type="button" data-lang="ja" aria-pressed="true">日本語</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="prod-hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="ver">v1.9 &middot; VST3 / CLAP / VST2 &middot; Windows / Linux</span>
+      <h1><span class="ja">ガッズアンプ<br>クリーミードライブ DI</span><span class="en">GuzzAmp<br>Creamy Drive DI</span></h1>
+      <p class="lead">
+        <span class="ja"><b>ベース用のプリアンプ / DI</b> プラグインです。
+          ラインで録ったベースに、真空管アンプを通したときの<b>太さと鳴き</b>を足します。
+          v1.9 では、歪みの中身を<b>真空管の物理そのものから作り直しました</b>。</span>
+        <span class="en">A <b>preamp and DI for bass</b>. It gives a DI'd bass the thickness and growl of a valve
+          front end. In v1.9 the distortion was rebuilt <b>from the physics of a real valve</b>.</span>
+      </p>
+      <div class="actions" style="display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn btn-primary" href="https://github.com/gzzio1989/GuzzAmp/releases/latest" target="_blank" rel="noopener">
+          <span class="ja">ダウンロード</span><span class="en">Download</span></a>
+        <a class="btn btn-ghost" href="#inside"><span class="ja">中身を見る</span><span class="en">What is inside</span></a>
+      </div>
+    <p class="dl dl-hero" data-dlrepo="gzzio1989/GuzzAmp"><b class="dl-num">0</b>
+      <span class="cap"><span class="ja">これまでのダウンロード</span><span class="en">downloads to date</span></span></p>
+    </div>
+    <div class="hero-art"><img src="../../assets/puniguji.png" alt="" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <p class="section-title">Features</p>
+    <h2><span class="ja">できること</span><span class="en">What it does</span></h2>
+    <ul class="featlist reveal">
+      <li><b><span class="ja">3つの歪みかた</span><span class="en">Three flavours</span></b>
+        <span class="ja">creamy（なめらか）／ tube（真空管らしい）／ fuzz（つぶれる）。DRIVE で深さを決めます。</span>
+        <span class="en">Creamy, tube and fuzz, with DRIVE setting how far in you go.</span></li>
+      <li><b><span class="ja">DRIVE を上げても音量が変わらない</span><span class="en">DRIVE does not change the level</span></b>
+        <span class="ja">v1.8 は 40% から 100% のあいだで出力が 3.3dB <b>下がって</b>いました。v1.9 はレベルの法則を先に決めて、入口側をそれに合わせています。DRIVE が変えるのは音の性格だけです。</span>
+        <span class="en">In v1.8 the output dropped 3.3 dB between 40 % and 100 % - a gain knob that made things quieter. v1.9 fixes the level law first and normalises the front end to it.</span></li>
+      <li><b><span class="ja">音づくり（トーン）</span><span class="en">Tone</span></b>
+        <span class="ja">ベースの帯域に合わせた調整。こもりと耳ざわりな所を別々に触れます。</span>
+        <span class="en">Tone shaping aimed at the bass range, with mud and harshness on separate controls.</span></li>
+      <li><b><span class="ja">ノイズ除去</span><span class="en">Noise removal</span></b>
+        <span class="ja">シールドのジー音やアンプの床ノイズを、弾いていない所だけ静かにします。</span>
+        <span class="en">Quietens cable hum and amp floor noise in the gaps, not while you play.</span></li>
+      <li><b><span class="ja">サスティン</span><span class="en">Sustain</span></b>
+        <span class="ja">音の伸びを足します。潰さずに、消えぎわだけを持ち上げるやりかたです。</span>
+        <span class="en">Adds length to notes by lifting only the decay, without squashing the front.</span></li>
+      <li><b><span class="ja">チューナー内蔵</span><span class="en">Built-in tuner</span></b>
+        <span class="ja">挿したまま合わせられます。</span>
+        <span class="en">Tune without unplugging.</span></li>
+      <li><b><span class="ja">曲を読み込んで合わせて弾ける</span><span class="en">Play along with a song</span></b>
+        <span class="ja">MP3 を読み込めるので、曲に合わせたまま音を作れます。</span>
+        <span class="en">Load an MP3 and dial your sound in against the actual track.</span></li>
+      <li><b><span class="ja">プリセット8つ</span><span class="en">Eight presets</span></b>
+        <span class="ja">全部を同じ体感音量にそろえてあります（ITU-R BS.1770 のラウドネス）。切り替えても音量が飛びません。</span>
+        <span class="en">All eight matched to the same perceived loudness (ITU-R BS.1770), so switching does not jump.</span></li>
+      <li><b><span class="ja">軽い</span><span class="en">Light on CPU</span></b>
+        <span class="ja">1台あたり 4.6%（既定）／ 7.2%（全機能最大）。48kHz・1コア換算で 13〜21台ぶんです。</span>
+        <span class="en">4.6 % per instance at defaults, 7.2 % with everything on - 13 to 21 instances on one core at 48 kHz.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="inside">
+  <div class="wrap">
+    <p class="section-title">Inside</p>
+    <h2><span class="ja">v1.9 で歪みを作り直した話</span><span class="en">Rebuilding the distortion in v1.9</span></h2>
+    <p style="margin-top:0;color:var(--cocoa-soft)">
+      <span class="ja">見た目も操作も v1.8 のままです。変わったのは<b>音そのもの</b>です。</span>
+      <span class="en">The look and the controls are unchanged from v1.8. What changed is the sound itself.</span>
+    </p>
+
+    <div class="panel reveal">
+      <h3 style="font-weight:400;margin:0 0 8px"><span class="ja">何が「安い音」だったのか</span><span class="en">What made it sound cheap</span></h3>
+      <p style="margin:0 0 12px;font-size:.92rem">
+        <span class="ja">測ったら、<b>奇数の倍音しか出ていませんでした</b>。第2倍音（オクターブ上＝太さ・艶・鳴き）が
+          第3倍音より <b>37dB 小さい</b>。実機の真空管は逆に第2倍音のほうが <b>12dB 大きい</b>ので、
+          49dB 逆を向いていたことになります。これはトランジスタ回路の署名で、
+          <b>あとから EQ で足すことは原理的にできません</b>。最初から作られていないからです。</span>
+        <span class="en">Measured, it was making <b>odd harmonics only</b>. The second harmonic - the octave, the part
+          that reads as thickness and growl - sat 37 dB below the third. A real valve puts the second
+          12 dB <b>above</b> it. That is 49 dB the wrong way, and no EQ can add back what was never made.</span>
+      </p>
+      <p style="margin:0;font-size:.92rem">
+        <span class="ja">原因は <code>tanh</code> が<b>奇関数</b>だからでした。正負のレールを非対称にしても効きません。
+          レールの非対称が生むのは直流のずれで、それは直流カットに捨てられるだけです。
+          <b>倍音を生むのは曲率の非対称</b>です。</span>
+        <span class="en">The cause: <code>tanh</code> is an <b>odd function</b>. Making the rails asymmetric does not help -
+          that produces a DC offset, which the DC blocker throws away. <b>Curvature</b> asymmetry is what
+          makes the harmonic.</span>
+      </p>
+    </div>
+
+    <div class="panel reveal">
+      <h3 style="font-weight:400;margin:0 0 8px"><span class="ja">直しかた — 真空管がやっていることをやる</span><span class="en">The fix - do what a valve does</span></h3>
+      <p style="margin:0 0 12px;font-size:.92rem">
+        <span class="ja">真空管のプレート電流は、駆動電圧の <b>3/2 乗</b>に従います（チャイルドの法則）。
+          その式を展開すると <b>2乗の項が3乗の項のちょうど6倍</b>になり、
+          第2倍音／第3倍音は理論値で <b>+12dB</b>。実測の資料に載っている数字が、式から直接出てきます。
+          計算は平方根1回ぶんです。</span>
+        <span class="en">Plate current follows the <b>3/2 power</b> of the drive voltage (Child's law). Expand it and the
+          square term is exactly six times the cube term, giving <b>+12 dB</b> of second over third - the same
+          number the measurement books report. It costs one square root.</span>
+      </p>
+      <table class="spec">
+        <tr><th><span class="ja">3段に分ける</span><span class="en">Three stages</span></th>
+            <td><span class="ja">1段で28dB叩き込むのをやめ、段間に負荷フィルタを入れました。1段目のゴミが2段目の材料になりません。ゲインを上げるとフィルタが下がる＝<b>上げるほど暗くなる</b>実機の挙動が自動で出ます。</span>
+                <span class="en">Instead of 28 dB in one stage, three with an interstage load filter. Turning the gain up lowers that filter, so it darkens as it drives - the way real gear does.</span></td></tr>
+        <tr><th><span class="ja">バイアス移動</span><span class="en">Bias shift</span></th>
+            <td><span class="ja">グリッド電流ぶん。22マイクロ秒で充電し 22ミリ秒で放電。この 1000:1 が波形の形を動かすので、<b>つぶしてもオクターブが死にません</b>。</span>
+                <span class="en">Grid current charges in 22 &micro;s and bleeds off in 22 ms. That 1000:1 keeps the octave alive even when saturated.</span></td></tr>
+        <tr><th><span class="ja">電源サグ</span><span class="en">Supply sag</span></th>
+            <td><span class="ja">名機の実測値どおり 8.9%（9.5ミリ秒 + 100ミリ秒）。強く弾いた瞬間だけ電圧が落ちます。</span>
+                <span class="en">8.9 %, with 9.5 ms and 100 ms constants, as measured on a classic amp.</span></td></tr>
+        <tr><th><span class="ja">左右で部品を変えた</span><span class="en">Left and right differ</span></th>
+            <td><span class="ja">v1.8 の左右差は <b>0.0000dB</b> でした。実機ではありえない数字です。抵抗の許容差の範囲で左右を変え、毎回同じ値になるようにしています。</span>
+                <span class="en">v1.8 measured 0.0000 dB between channels - impossible in hardware. Now they differ within resistor tolerance, deterministically.</span></td></tr>
+      </table>
+    </div>
+
+    <div class="panel reveal">
+      <h3 style="font-weight:400;margin:0 0 12px"><span class="ja">結果（実測）</span><span class="en">Measured result</span></h3>
+      <table class="spec">
+        <tr><th><span class="ja">第2倍音／第3倍音（creamy）</span><span class="en">2nd over 3rd (creamy)</span></th>
+            <td>&minus;37.3 dB &rarr; <b>+19.4 dB</b>　<span class="ja">（実機の目安 +12）</span><span class="en">(real valve: +12)</span></td></tr>
+        <tr><th><span class="ja">第2倍音／第3倍音（tube）</span><span class="en">2nd over 3rd (tube)</span></th>
+            <td>&minus;16.8 dB &rarr; <b>+18.4 dB</b></td></tr>
+        <tr><th><span class="ja">第2倍音／第3倍音（fuzz）</span><span class="en">2nd over 3rd (fuzz)</span></th>
+            <td>&minus;42.1 dB &rarr; <b>+11.9 dB</b></td></tr>
+        <tr><th><span class="ja">耳につく成分</span><span class="en">Audible grit</span></th>
+            <td><span class="ja">3つの歪みかた全部が、はじめて<b>聞こえない側</b>に入りました（マスキング閾値の下）。</span>
+                <span class="en">All three flavours now sit below the masking threshold for the first time.</span></td></tr>
+        <tr><th><span class="ja">低域のにごり</span><span class="en">Low-end mud</span></th>
+            <td>&minus;38〜&minus;66 dB &rarr; <b>&minus;55〜&minus;121 dB</b></td></tr>
+        <tr><th><span class="ja">左右の差</span><span class="en">Channel difference</span></th>
+            <td>0.0000 dB &rarr; <b>0.886 dB</b></td></tr>
+      </table>
+      <p style="margin:12px 0 0;font-size:.88rem;color:var(--cocoa-soft)">
+        <span class="ja">配布物の <code>audio/</code> に、前半17秒が v1.8・後半17秒が v1.9 の MP3 が3つ入っています。
+          1本目が正弦波なのは、<b>聞こえる倍音を全部プラグインが作ったものにする</b>ためです
+          （本物のベース弦は自前の倍音を100本持っていて、それがプラグインの倍音を隠してしまいます）。</span>
+        <span class="en">The download includes three MP3s: 17 seconds of v1.8, a gap, then 17 seconds of v1.9. The first
+          starts with a sine wave on purpose - then every harmonic you hear is one the plugin made.</span>
+      </p>
+    </div>
+
+    <div class="panel reveal">
+      <h3 style="font-weight:400;margin:0 0 12px"><span class="ja">検証</span><span class="en">Verification</span></h3>
+      <table class="spec">
+        <tr><th><span class="ja">サンプリング周波数</span><span class="en">Sample rates</span></th>
+            <td><span class="ja">44.1 / 48 / 96kHz すべてで全テスト合格</span><span class="en">All tests pass at 44.1, 48 and 96 kHz</span></td></tr>
+        <tr><th><span class="ja">メモリ安全性</span><span class="en">Memory safety</span></th>
+            <td><span class="ja">AddressSanitizer + UndefinedBehaviorSanitizer で異常なし（出荷時の最適化フラグでも同じ）</span>
+                <span class="en">Clean under AddressSanitizer and UndefinedBehaviorSanitizer, including with shipping optimisation flags</span></td></tr>
+        <tr><th><span class="ja">実際に鳴らして確認</span><span class="en">Actually loaded and played</span></th>
+            <td><span class="ja">Windows のバイナリを本物のホスト手順で読み込み、44.1 / 48 / 96kHz で再生確認</span>
+                <span class="en">The Windows binaries are loaded through a real host sequence and played at all three rates</span></td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="env">
+  <div class="wrap">
+    <p class="section-title">Requirements</p>
+    <h2><span class="ja">動作環境とインストール</span><span class="en">Requirements and install</span></h2>
+    <div class="panel reveal">
+      <table class="spec">
+        <tr><th>OS</th><td>Windows 10 / 11 (64bit)、Linux (x86_64)</td></tr>
+        <tr><th><span class="ja">形式</span><span class="en">Formats</span></th><td>VST3 / CLAP / VST2</td></tr>
+        <tr><th><span class="ja">入れかた</span><span class="en">Install</span></th>
+            <td><span class="ja">インストーラー（<code>GuzzAmp-CreamyDriveDI-Setup.exe</code>）を実行すれば全部自動です。手で置く場合は VST3 を <code>C:\Program Files\Common Files\VST3\</code>、CLAP を <code>C:\Program Files\Common Files\CLAP\</code> へ。</span>
+                <span class="en">Run the installer and it places everything. By hand: VST3 into the common VST3 folder, CLAP into the common CLAP folder.</span></td></tr>
+      </table>
+    </div>
+    <p class="notice reveal" style="margin-top:16px">
+      <span class="ja">未署名のため、初回起動時に SmartScreen の青い警告が出ることがあります。「詳細情報」→「実行」で進めてください（異常ではありません）。</span>
+      <span class="en">The build is unsigned, so SmartScreen may warn you the first time. Choose "More info" then "Run" - this is expected.</span>
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap inner">
+    <a href="../../">&larr; <span class="ja">ソフト一覧へ</span><span class="en">All apps</span></a>
+    <span>&copy; G'zzio</span>
+    <a href="https://github.com/gzzio1989" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+<script src="../../assets/site.js"></script>
+</body>
+</html>

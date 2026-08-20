@@ -42,7 +42,7 @@ echo   よければ何かキーを押す  → コミットして push します
 echo   やめる場合             → このウィンドウを閉じてください
 pause
 
-git commit -m "製品ページを v2.11.0 へ更新（ゆるふわ・よると画面写真の差し替え）"
+git commit -m "GuzzAmp Creamy Drive DI のページを追加（トップページも3本立てへ）"
 if errorlevel 1 (
   echo [中止] コミットするものがありませんでした。
   pause

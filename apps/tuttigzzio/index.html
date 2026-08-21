@@ -121,7 +121,8 @@ button{font-family:inherit; font-size:16px; color:var(--ink); cursor:pointer}
 .kv{display:flex; justify-content:space-between; align-items:baseline; gap:10px;
   padding:6px 0; border-bottom:1px dashed var(--line); font-size:15px}
 .kv:last-of-type{border-bottom:0}
-.kv span{color:var(--inkSoft); font-size:14px}
+.kv span{color:var(--inkSoft); font-size:14px; white-space:nowrap; flex:0 0 auto}
+.kv b{text-align:right; word-break:break-word}
 
 .knob{margin:14px 0}
 .knob .top{display:flex; justify-content:space-between; align-items:baseline}
@@ -169,6 +170,25 @@ audio{width:100%; margin-top:10px}
 .tab.on::before{content:''; display:block; width:26px; height:3px; border-radius:2px;
   background:var(--accent); margin:0 auto 4px}
 .tab:not(.on)::before{content:''; display:block; height:3px; margin:0 auto 4px}
+
+/* ---- YouTube のさがしもの ---- */
+.hits{display:flex; flex-direction:column; gap:8px; margin-top:10px}
+.hit{display:flex; gap:10px; align-items:center; padding:8px; border-radius:12px;
+  background:var(--panel2); border:1px solid var(--line); text-align:left; width:100%;
+  min-height:44px; font-family:inherit; color:var(--ink)}
+.hit img{width:88px; height:50px; object-fit:cover; border-radius:8px; flex:0 0 auto; background:#000}
+.hit .ti{font-size:14px; font-weight:700; line-height:1.35; display:-webkit-box;
+  -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.hit .ch{font-size:12px; color:var(--inkSoft); margin-top:2px}
+.hit.on{border-color:var(--accent2); border-width:2px}
+#ytWords{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+#ytWords .word{font-size:14px; padding:0 8px}
+details{margin-top:12px; border:1px solid var(--line); border-radius:12px; background:var(--panel2); padding:0 12px}
+details[open]{padding-bottom:12px}
+summary{min-height:44px; display:flex; align-items:center; font-size:14px; font-weight:700; cursor:pointer}
+details ol{padding-left:1.3em; margin:6px 0}
+details code{background:var(--panel); padding:1px 5px; border-radius:5px; font-size:12px}
+.tab{font-size:13px}
 </style>
 </head>
 <body>
@@ -179,7 +199,7 @@ audio{width:100%; margin-top:10px}
   <header class="hero">
     <div class="hero-l">
       <div class="logo">TuttiGzzio</div>
-      <div class="ver">v0.1.0 ／ ゼロ遅延の声の道</div>
+      <div class="ver">v0.2.0 ／ ゼロ遅延の声の道</div>
     </div>
     <div class="hero-r">
       <button id="themeBtn" class="chip" aria-label="よる／ひる">🌙</button>
@@ -192,8 +212,9 @@ audio{width:100%; margin-top:10px}
 
     <div class="card" id="startCard">
       <h2>まず、マイクを許可します</h2>
-      <p class="note">iPhone は <b>有線イヤホン</b>を挿してください。Bluetooth（AirPods など）は
-        音が 150〜200ms 遅れるので、合奏にも録音にも使えません。</p>
+      <p class="note"><b>有線イヤホン・Bluetooth・スピーカー、どれでも使えます。</b>
+        きこえかたは「みみ」で選んでください。<b>Bluetooth もスピーカーも、往復のずれを1回測れば
+        録ったものはピッタリ合います</b>（ずれは大きくても、いつも同じだからです）。</p>
       <button id="startBtn" class="big primary">マイクを使う</button>
       <div id="startMsg" class="msg"></div>
     </div>
@@ -208,7 +229,38 @@ audio{width:100%; margin-top:10px}
 
       <div id="ytBox">
         <div class="row">
-          <input id="ytUrl" type="text" inputmode="url" placeholder="YouTube の URL か 動画ID を貼る">
+          <input id="ytQ" type="text" inputmode="search" placeholder="曲名や歌手名でさがす">
+          <button id="ytGo" class="mini">さがす</button>
+        </div>
+        <div class="row mt" id="ytWords">
+          <button class="mini word on" data-w="カラオケ">カラオケ</button>
+          <button class="mini word" data-w="オフボーカル">オフボーカル</button>
+          <button class="mini word" data-w="instrumental">instrumental</button>
+          <button class="mini word" data-w="">そのまま</button>
+        </div>
+        <div id="ytHits" class="hits"></div>
+        <div id="ytSearchMsg" class="msg"></div>
+
+        <details id="ytKeyBox">
+          <summary>アプリの中でさがすための「かぎ」（1回だけ）</summary>
+          <p class="note small">Google の YouTube Data API のかぎを入れると、<b>この画面の中に結果が並びます</b>。
+            かぎはこの端末の中だけに保存され、どこにも送られません（配布物にも入っていません）。
+            入れないときは「さがす」で YouTube のページが別のタブで開きます。</p>
+          <ol class="note small">
+            <li>console.cloud.google.com でプロジェクトを作る</li>
+            <li>「YouTube Data API v3」を有効にする</li>
+            <li>「認証情報 → APIキー」を作り、<b>HTTPリファラーを <code>gzzio1989.github.io/*</code> に限定</b>する</li>
+          </ol>
+          <div class="row">
+            <input id="ytKey" type="text" inputmode="text" placeholder="APIキーを貼る">
+            <button id="ytKeySave" class="mini">しまう</button>
+            <button id="ytKeyDel" class="mini">消す</button>
+          </div>
+          <div id="ytKeyMsg" class="msg"></div>
+        </details>
+
+        <div class="row mt">
+          <input id="ytUrl" type="text" inputmode="url" placeholder="URL か 動画ID を直接貼る">
           <button id="ytLoad" class="mini">よむ</button>
         </div>
         <div id="ytPlayerWrap"><div id="ytPlayer"></div></div>
@@ -241,7 +293,6 @@ audio{width:100%; margin-top:10px}
         </div>
       </div>
       <div class="row mt">
-        <button id="monBtn" class="mini on">自分の声を聴く</button>
         <button id="cmpBtn" class="mini">くらべる（素通し）</button>
         <button id="learnBtn" class="mini">ハムを覚える</button>
       </div>
@@ -269,6 +320,57 @@ audio{width:100%; margin-top:10px}
         音が出てくるまでの<b>実測サンプル数</b>を数えます。</p>
       <button id="measureBtn" class="big">測る</button>
       <div id="measureOut" class="msg"></div>
+    </div>
+  </section>
+
+  <!-- ============ みみ ============ -->
+  <section class="page hidden" id="page-ear">
+    <div class="card">
+      <h2>きこえかた</h2>
+      <div class="seg" id="outSeg">
+        <button class="seg-b on" data-out="wired">有線</button>
+        <button class="seg-b" data-out="bt">Bluetooth</button>
+        <button class="seg-b" data-out="speaker">スピーカー</button>
+      </div>
+      <div id="outHint" class="note"></div>
+      <div class="kv"><span>見つけた出口</span><b id="outFound">—</b></div>
+      <div class="kv"><span>いま使う往復のずれ</span><b id="rtNow">0 ms</b></div>
+    </div>
+
+    <div class="card">
+      <h2>エコー消し</h2>
+      <div class="seg" id="aecSeg">
+        <button class="seg-b on" data-aec="off">切（音がきれい）</button>
+        <button class="seg-b" data-aec="on">入（回り込みを消す）</button>
+      </div>
+      <p class="note" id="aecHint"></p>
+      <div class="kv"><span>マイクに本当に効いている設定</span><b id="micReal">—</b></div>
+      <label class="check"><input type="checkbox" id="howlChk" checked> ハウリング止め（急に鳴き出したら自動で下げる）</label>
+      <div id="aecMsg" class="msg"></div>
+    </div>
+
+    <div class="card">
+      <h2>往復のずれを測る</h2>
+      <p class="note">出口から耳、耳からマイクまで、音が一周する時間を実測します。
+        <b>これを引くと、Bluetooth でも録ったものが曲にピッタリ合います。</b></p>
+      <p class="note small" id="measHow"></p>
+      <button id="rtBtn" class="big primary">ピッと鳴らして測る</button>
+      <div id="rtMsg" class="msg"></div>
+      <div class="knob">
+        <div class="top"><span class="nm">手で直す</span><span class="vl" id="rtVal">0 ms</span></div>
+        <input id="rtSlide" type="range" min="0" max="500" step="1" value="0">
+        <div class="dc">測れないときは、ここを動かして耳で合わせてください。
+          録ったものが「オケより遅れている」と感じたら、数字を大きくします。</div>
+      </div>
+      <div class="row"><button id="rtReset" class="mini">0 に戻す</button></div>
+    </div>
+
+    <div class="card">
+      <h2>自分の声を返すか</h2>
+      <label class="check"><input type="checkbox" id="monChk" checked> 自分の声をイヤホンに返す</label>
+      <p class="note small">Bluetooth とスピーカーでは<b>自動で切ります</b>。
+        遅れて返ってくる自分の声は、いちばん歌いにくいものだからです。
+        地声とオケだけを聴いて歌ってください（録音には影響しません）。</p>
     </div>
   </section>
 
@@ -351,6 +453,7 @@ audio{width:100%; margin-top:10px}
   <nav class="tabs">
     <button class="tab on" data-p="sing">うたう</button>
     <button class="tab" data-p="voice">こえ</button>
+    <button class="tab" data-p="ear">みみ</button>
     <button class="tab" data-p="duo">ふたり</button>
     <button class="tab" data-p="mix">しあげ</button>
   </nav>
@@ -837,6 +940,7 @@ class VoiceChain {
     this.eqLo = new Biquad(); this.eqMid = new Biquad(); this.eqHi = new Biquad();
     this.rev = new Reverb();
     this.lim = new SafeLimiter();      // 自分の耳へ
+    this.howl = new HowlGuard();       // ハウリング止め（自分の耳へ返す側だけ）
     this.limSend = new SafeLimiter();  // 相手へ送る音（別個体。片方の動きがもう片方に漏れない）
     this._rv = [0, 0];
     this._lr = [0, 0];
@@ -852,6 +956,7 @@ class VoiceChain {
       comp: 0.45,
       lo: 0, mid: 0, hi: 1.5,   // dB
       rev: 0.25, revSize: 0.5,
+      howl: true,        // ハウリング止め（スピーカーで使うとき用）
       wide: 0.35,        // 0..1 左右のひらき
       gain: 1.0,         // しあげ音量（倍率）
       sendRev: false,    // 相手へ送る音にも ひろがり を乗せるか（既定=乗せない）
@@ -876,6 +981,7 @@ class VoiceChain {
     this.rev.prepare(sr);
     this.lim.prepare(sr);
     this.limSend.prepare(sr);
+    this.howl.prepare(sr);
     this.applyParams();
     this.mAtk = Math.exp(-1 / (0.001 * sr));
     this.mRel = Math.exp(-1 / (0.220 * sr));
@@ -900,6 +1006,7 @@ class VoiceChain {
     this.eqMid.peak(1000, 0.9, p.mid, sr);
     this.eqHi.highShelf(6000, p.hi, sr);
     this.rev.set(p.rev, p.revSize);
+    this.howl.set(p.howl !== false);
   }
 
   /** ハム学習を始める（静かにしてもらっている間だけ observe する） */
@@ -953,6 +1060,8 @@ class VoiceChain {
         const m = (l + r) * 0.5, s = (l - r) * 0.5 * (1 + wide * 1.6);
         l = m + s; r = m - s;
       }
+      // ハウリング止めは「自分の耳へ返す側」だけ。相手へ送る音は輪に入らない。
+      l = this.howl.tick(l); r = r * this.howl.g;
       const lr = this._lr;
       this.lim.stereo(l, r, lr);
       l = lr[0]; r = lr[1];
@@ -1011,9 +1120,110 @@ function autoMix(tracks, sr, opt) {
 }
 
 
-const WORKLET_SOURCE = "/* =====================================================================\n   TuttiGzzio — 声の道（ゼロ遅延DSP）\n   VocalGzzio v3.1 の「セッション構成」＝遅延を足さない部品だけを移植したもの。\n   ・ぜんぶ IIR / 一次遅れ / 帯域分割。先読みバッファは1つも無い。\n   ・process() の中で new / 配列確保をしない（VocalGzzio の最重要教訓）。\n   ・Node からも import できる。tools/test_dsp.mjs が遅延台帳を作る。\n   ===================================================================== */\n\n'use strict';\n\nconst TAU = Math.PI * 2;\n\n/* ---------- 小さな部品 ------------------------------------------------ */\n\n/** 一次ローパス（係数は prepare で確定。process 内で作らない） */\nfunction onePole(hz, sr) {\n  return 1 - Math.exp(-TAU * hz / sr);\n}\n\n/** dB → 倍率 */\nfunction db2lin(db) { return Math.pow(10, db / 20); }\n/** 倍率 → dB（0で -inf にならないように下駄） */\nfunction lin2db(x) { return 20 * Math.log10(Math.max(x, 1e-9)); }\n\n/** 双二次（RBJ）。係数は「入れ物へ代入」する形。確保しない。 */\nclass Biquad {\n  constructor() {\n    this.b0 = 1; this.b1 = 0; this.b2 = 0; this.a1 = 0; this.a2 = 0;\n    this.z1 = 0; this.z2 = 0;\n  }\n  reset() { this.z1 = 0; this.z2 = 0; }\n  /** 直接形II転置。1サンプル。 */\n  tick(x) {\n    const y = this.b0 * x + this.z1;\n    this.z1 = this.b1 * x - this.a1 * y + this.z2;\n    this.z2 = this.b2 * x - this.a2 * y;\n    return y;\n  }\n  _norm(b0, b1, b2, a0, a1, a2) {\n    const ia = 1 / a0;\n    this.b0 = b0 * ia; this.b1 = b1 * ia; this.b2 = b2 * ia;\n    this.a1 = a1 * ia; this.a2 = a2 * ia;\n  }\n  highpass(f, q, sr) {\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / (2 * q);\n    this._norm((1 + c) / 2, -(1 + c), (1 + c) / 2, 1 + al, -2 * c, 1 - al);\n  }\n  lowpass(f, q, sr) {\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / (2 * q);\n    this._norm((1 - c) / 2, 1 - c, (1 - c) / 2, 1 + al, -2 * c, 1 - al);\n  }\n  notch(f, q, sr) {\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / (2 * q);\n    this._norm(1, -2 * c, 1, 1 + al, -2 * c, 1 - al);\n  }\n  peak(f, q, gainDb, sr) {\n    const A = Math.pow(10, gainDb / 40);\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / (2 * q);\n    this._norm(1 + al * A, -2 * c, 1 - al * A, 1 + al / A, -2 * c, 1 - al / A);\n  }\n  lowShelf(f, gainDb, sr) {\n    const A = Math.pow(10, gainDb / 40);\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / 2 * Math.sqrt(2);\n    const sq = 2 * Math.sqrt(A) * al;\n    this._norm(\n      A * ((A + 1) - (A - 1) * c + sq),\n      2 * A * ((A - 1) - (A + 1) * c),\n      A * ((A + 1) - (A - 1) * c - sq),\n      (A + 1) + (A - 1) * c + sq,\n      -2 * ((A - 1) + (A + 1) * c),\n      (A + 1) + (A - 1) * c - sq\n    );\n  }\n  highShelf(f, gainDb, sr) {\n    const A = Math.pow(10, gainDb / 40);\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / 2 * Math.sqrt(2);\n    const sq = 2 * Math.sqrt(A) * al;\n    this._norm(\n      A * ((A + 1) + (A - 1) * c + sq),\n      -2 * A * ((A - 1) + (A + 1) * c),\n      A * ((A + 1) + (A - 1) * c - sq),\n      (A + 1) - (A - 1) * c + sq,\n      2 * ((A - 1) - (A + 1) * c),\n      (A + 1) - (A - 1) * c - sq\n    );\n  }\n}\n\n/* ---------- ハムキラー（50/60Hz 自動判定） ----------------------------\n   日本は東50Hz／西60Hz。「どっちですか」と聞かないのが VocalGzzio の作法。\n   静かなところで 50系(50,100,150,200) と 60系(60,120,180,240) の\n   エネルギーを比べ、勝ったほうにQの高いノッチを立てる。\n   ---------------------------------------------------------------------- */\nclass HumKiller {\n  constructor() {\n    this.p50 = [new Biquad(), new Biquad(), new Biquad(), new Biquad()];\n    this.p60 = [new Biquad(), new Biquad(), new Biquad(), new Biquad()];\n    this.n = [new Biquad(), new Biquad(), new Biquad(), new Biquad()];\n    this.e50 = 0; this.e60 = 0; this.decided = 0; this.hz = 0; this.on = false;\n  }\n  prepare(sr) {\n    this.sr = sr;\n    for (let i = 0; i < 4; i++) {\n      this.p50[i].peak(50 * (i + 1), 30, 0, sr); this.p50[i].bandpassLike = true;\n      this.p50[i].lowpass(1, 0.7, sr); // 一旦潰してから下で作り直す\n    }\n    // 検出用は帯域通過（peak ではなく notch の補集合を使わず、素直に BPF を作る）\n    for (let i = 0; i < 4; i++) {\n      bandpass(this.p50[i], 50 * (i + 1), 24, sr);\n      bandpass(this.p60[i], 60 * (i + 1), 24, sr);\n      this.n[i].notch(50 * (i + 1), 24, sr);\n      this.n[i].reset();\n    }\n    this.e50 = 0; this.e60 = 0; this.decided = 0; this.hz = 0; this.on = false;\n    this.coef = onePole(0.5, sr);\n  }\n  /** 判定だけ（静かな区間で呼ぶ）。音は変えない。 */\n  observe(x) {\n    let a = 0, b = 0;\n    for (let i = 0; i < 4; i++) { const u = this.p50[i].tick(x); a += u * u; }\n    for (let i = 0; i < 4; i++) { const u = this.p60[i].tick(x); b += u * u; }\n    this.e50 += (a - this.e50) * this.coef;\n    this.e60 += (b - this.e60) * this.coef;\n  }\n  /** 判定を確定してノッチを張る。静かな区間を一定時間見たあとで1回だけ。 */\n  decide() {\n    const tot = this.e50 + this.e60;\n    if (tot < 1e-12) { this.on = false; return 0; }   // ハムが無い＝何もしない\n    const hz = this.e50 > this.e60 * 1.2 ? 50 : (this.e60 > this.e50 * 1.2 ? 60 : 0);\n    if (hz === 0) { this.on = false; return 0; }      // 差がつかない＝決め打たない\n    for (let i = 0; i < 4; i++) { this.n[i].notch(hz * (i + 1), 24, this.sr); this.n[i].reset(); }\n    this.hz = hz; this.on = true; this.decided = 1;\n    return hz;\n  }\n  tick(x) {\n    if (!this.on) return x;\n    let y = x;\n    for (let i = 0; i < 4; i++) y = this.n[i].tick(y);\n    return y;\n  }\n}\n\nfunction bandpass(bq, f, q, sr) {\n  const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n  const al = s / (2 * q);\n  bq._norm(al, 0, -al, 1 + al, -2 * c, 1 - al);\n  bq.reset();\n}\n\n/* ---------- ノイズゲート（ヒステリシス付き・ゼロ遅延） ---------------- */\nclass Gate {\n  prepare(sr) {\n    this.sr = sr;\n    this.env = 0; this.g = 1;\n    this.aAtk = Math.exp(-1 / (0.002 * sr));\n    this.aRel = Math.exp(-1 / (0.080 * sr));\n    this.gAtk = Math.exp(-1 / (0.003 * sr));\n    this.gRel = Math.exp(-1 / (0.120 * sr));\n    this.open = false;\n    this.thOpen = db2lin(-46); this.thShut = db2lin(-52);\n    this.floor = db2lin(-24);\n  }\n  /** amount 0..1 : 0で完全素通し */\n  set(amount) {\n    const a = Math.max(0, Math.min(1, amount));\n    this.amount = a;\n    // 効きの強さ = しきい値と下げ幅の両方\n    this.thOpen = db2lin(-52 + 12 * a);\n    this.thShut = db2lin(-58 + 12 * a);\n    this.floor = db2lin(-6 - 30 * a);\n  }\n  tick(x) {\n    const a = Math.abs(x);\n    const c = a > this.env ? this.aAtk : this.aRel;\n    this.env = a + (this.env - a) * c;\n    if (this.open) { if (this.env < this.thShut) this.open = false; }\n    else { if (this.env > this.thOpen) this.open = true; }\n    const t = this.open ? 1 : this.floor;\n    const gc = t > this.g ? this.gAtk : this.gRel;\n    this.g = t + (this.g - t) * gc;\n    return x * this.g;\n  }\n}\n\n/* ---------- 近接効果ならし（動的ローシェルフ） ------------------------\n   マイクに近づくと低域が持ち上がる。低域と全体の比を見て、盛れている\n   ぶんだけシェルフで戻す。先読みが要らないのでゼロ遅延で作れる。\n   ---------------------------------------------------------------------- */\nclass ProximityTamer {\n  constructor() { this.lo = new Biquad(); this.sh = new Biquad(); }\n  prepare(sr) {\n    this.sr = sr;\n    this.lo.lowpass(180, 0.7, sr); this.lo.reset();\n    this.sh.lowShelf(220, 0, sr); this.sh.reset();\n    this.eLo = 0; this.eAll = 0; this.cut = 0; this.target = 0;\n    this.c = onePole(6, sr);      // 比の追従\n    this.cg = onePole(2.5, sr);   // シェルフの動き（ゆっくり）\n    this.amount = 0; this.recalc = 0;\n  }\n  set(amount) { this.amount = Math.max(0, Math.min(1, amount)); }\n  tick(x) {\n    if (this.amount <= 0) return x;\n    const l = this.lo.tick(x);\n    this.eLo += (l * l - this.eLo) * this.c;\n    this.eAll += (x * x - this.eAll) * this.c;\n    if (this.eAll > 1e-9) {\n      const ratio = this.eLo / this.eAll;          // 0..1\n      // 0.45 を「ふつう」とみなし、超えたぶんだけ削る（最大 -9dB）\n      const over = Math.max(0, ratio - 0.45) / 0.55;\n      this.target = -9 * over * this.amount;\n    }\n    this.cut += (this.target - this.cut) * this.cg;\n    if (++this.recalc >= 256) {                    // 係数の作り直しは間引く\n      this.recalc = 0;\n      this.sh.lowShelf(220, this.cut, this.sr);\n    }\n    return this.sh.tick(x);\n  }\n}\n\n/* ---------- なめらか（動的レゾナンス抑制の簡易版） --------------------\n   3本の可変ピークで、突出している帯域だけ動的に押さえる。\n   本家 Resonance::Tamer の考え方を、帯域を固定して軽くしたもの。\n   ---------------------------------------------------------------------- */\nclass Smoother {\n  constructor() {\n    this.f = [400, 1200, 3200];\n    this.det = [new Biquad(), new Biquad(), new Biquad()];\n    this.cut = [new Biquad(), new Biquad(), new Biquad()];\n    this.e = [0, 0, 0]; this.g = [0, 0, 0]; this.eAll = 0;\n  }\n  prepare(sr) {\n    this.sr = sr; this.amount = 0; this.recalc = 0;\n    for (let i = 0; i < 3; i++) {\n      bandpass(this.det[i], this.f[i], 2.2, sr);\n      this.cut[i].peak(this.f[i], 2.2, 0, sr); this.cut[i].reset();\n      this.e[i] = 0; this.g[i] = 0;\n    }\n    this.c = onePole(12, sr); this.cg = onePole(8, sr);\n  }\n  set(amount) { this.amount = Math.max(0, Math.min(1, amount)); }\n  tick(x) {\n    if (this.amount <= 0) return x;\n    this.eAll += (x * x - this.eAll) * this.c;\n    for (let i = 0; i < 3; i++) {\n      const u = this.det[i].tick(x);\n      this.e[i] += (u * u - this.e[i]) * this.c;\n    }\n    if (++this.recalc >= 128) {\n      this.recalc = 0;\n      for (let i = 0; i < 3; i++) {\n        let t = 0;\n        if (this.eAll > 1e-9) {\n          const r = this.e[i] / this.eAll;\n          const over = Math.max(0, r - 0.30) / 0.70;\n          t = -8 * over * this.amount;\n        }\n        this.g[i] += (t - this.g[i]) * 0.5;\n        this.cut[i].peak(this.f[i], 2.2, this.g[i], this.sr);\n      }\n    }\n    let y = x;\n    for (let i = 0; i < 3; i++) y = this.cut[i].tick(y);\n    return y;\n  }\n}\n\n/* ---------- ディエッサー（スプリットバンド・ゼロ遅延） ---------------- */\nclass DeEsser {\n  constructor() { this.hp = new Biquad(); this.hp2 = new Biquad(); }\n  prepare(sr) {\n    this.sr = sr;\n    this.hp.highpass(5200, 0.7, sr); this.hp.reset();\n    this.hp2.highpass(5200, 0.7, sr); this.hp2.reset();\n    this.env = 0; this.g = 1; this.amount = 0;\n    this.aAtk = Math.exp(-1 / (0.0006 * sr));\n    this.aRel = Math.exp(-1 / (0.040 * sr));\n    this.th = db2lin(-30);\n  }\n  set(amount) {\n    this.amount = Math.max(0, Math.min(1, amount));\n    this.th = db2lin(-18 - 18 * this.amount);\n    this.maxCut = 14 * this.amount;\n  }\n  tick(x) {\n    if (this.amount <= 0) return x;\n    const hi = this.hp.tick(x);\n    const a = Math.abs(hi);\n    const c = a > this.env ? this.aAtk : this.aRel;\n    this.env = a + (this.env - a) * c;\n    let cut = 0;\n    if (this.env > this.th) cut = Math.min(this.maxCut, (lin2db(this.env) - lin2db(this.th)) * 0.8);\n    const gain = db2lin(-cut);\n    // 高域だけ下げる = 全体 - 高域 + 高域*gain\n    return x + hi * (gain - 1);\n  }\n}\n\n/* ---------- 子音エンハンサー（言葉を立てる） --------------------------\n   トランジェント（速い包絡 > 遅い包絡）のときだけ 2〜6kHz を一瞬持ち上げる。\n   ---------------------------------------------------------------------- */\nclass ConsonantEnhancer {\n  constructor() { this.bp = new Biquad(); }\n  prepare(sr) {\n    this.sr = sr;\n    bandpass(this.bp, 3400, 0.9, sr);\n    this.fast = 0; this.slow = 0; this.g = 0; this.amount = 0;\n    this.aF = Math.exp(-1 / (0.0015 * sr));\n    this.aS = Math.exp(-1 / (0.050 * sr));\n    this.aG = Math.exp(-1 / (0.030 * sr));\n  }\n  set(amount) { this.amount = Math.max(0, Math.min(1, amount)); }\n  tick(x) {\n    if (this.amount <= 0) return x;\n    const a = Math.abs(x);\n    this.fast = a + (this.fast - a) * (a > this.fast ? this.aF : this.aF);\n    this.slow = a + (this.slow - a) * this.aS;\n    let t = 0;\n    if (this.slow > 1e-5 && this.fast > this.slow * 1.6) t = 1;\n    this.g = t + (this.g - t) * this.aG;\n    return x + this.bp.tick(x) * this.g * this.amount * 1.6;\n  }\n}\n\n/* ---------- コンプ（ゼロ遅延・ソフトニー） ---------------------------- */\nclass Comp {\n  prepare(sr) {\n    this.sr = sr; this.env = 0; this.gr = 0; this.amount = 0;\n    this.aAtk = Math.exp(-1 / (0.006 * sr));\n    this.aRel = Math.exp(-1 / (0.120 * sr));\n    this.th = -18; this.ratio = 2.5; this.knee = 8; this.make = 1;\n  }\n  set(amount) {\n    const a = Math.max(0, Math.min(1, amount));\n    this.amount = a;\n    this.th = -8 - 22 * a;          // -8 → -30 dB\n    this.ratio = 1.5 + 3.5 * a;     // 1.5 → 5\n    this.make = db2lin((0 - this.th) * (1 - 1 / this.ratio) * 0.55);\n  }\n  tick(x) {\n    if (this.amount <= 0) return x;\n    const a = Math.abs(x);\n    const c = a > this.env ? this.aAtk : this.aRel;\n    this.env = a + (this.env - a) * c;\n    const db = lin2db(this.env);\n    let over = db - this.th;\n    let cut = 0;\n    if (over > this.knee / 2) cut = over - over / this.ratio;\n    else if (over > -this.knee / 2) {\n      const t = over + this.knee / 2;\n      cut = (1 - 1 / this.ratio) * t * t / (2 * this.knee);\n    }\n    this.gr = cut;\n    return x * db2lin(-cut) * this.make;\n  }\n}\n\n/* ---------- ひろがり（Schroeder リバーブ・モノ入力→ステレオ） -------- */\nconst COMB_L = [1116, 1188, 1277, 1356, 1422, 1491, 1557, 1617];\nconst ALLP_L = [556, 441, 341, 225];\nconst SPREAD = 23;\n\nclass Reverb {\n  prepare(sr) {\n    const k = sr / 44100;\n    this.combL = []; this.combR = []; this.apL = []; this.apR = [];\n    for (let i = 0; i < 8; i++) {\n      this.combL.push(makeLine(Math.round(COMB_L[i] * k)));\n      this.combR.push(makeLine(Math.round((COMB_L[i] + SPREAD) * k)));\n    }\n    for (let i = 0; i < 4; i++) {\n      this.apL.push(makeLine(Math.round(ALLP_L[i] * k)));\n      this.apR.push(makeLine(Math.round((ALLP_L[i] + SPREAD) * k)));\n    }\n    this.fL = new Float32Array(8); this.fR = new Float32Array(8);\n    this.damp = 0.32; this.feed = 0.80; this.wet = 0; this.preHp = new Biquad();\n    this.preHp.highpass(280, 0.7, sr); this.preHp.reset();\n  }\n  set(amount, size) {\n    this.wet = Math.max(0, Math.min(1, amount)) * 0.55;\n    const s = Math.max(0, Math.min(1, size === undefined ? 0.5 : size));\n    this.feed = 0.74 + 0.20 * s;\n    this.damp = 0.45 - 0.22 * s;\n  }\n  /** モノ x を受けて [l, r] のウェットぶんを out[0],out[1] に足す */\n  tick(x, out) {\n    if (this.wet <= 0) { out[0] = 0; out[1] = 0; return; }\n    const inp = this.preHp.tick(x) * 0.22;\n    let l = 0, r = 0;\n    for (let i = 0; i < 8; i++) {\n      const cl = this.combL[i], cr = this.combR[i];\n      let y = cl.buf[cl.i];\n      this.fL[i] = y * (1 - this.damp) + this.fL[i] * this.damp;\n      cl.buf[cl.i] = inp + this.fL[i] * this.feed;\n      if (++cl.i >= cl.n) cl.i = 0;\n      l += y;\n      y = cr.buf[cr.i];\n      this.fR[i] = y * (1 - this.damp) + this.fR[i] * this.damp;\n      cr.buf[cr.i] = inp + this.fR[i] * this.feed;\n      if (++cr.i >= cr.n) cr.i = 0;\n      r += y;\n    }\n    for (let i = 0; i < 4; i++) {\n      l = ap(this.apL[i], l); r = ap(this.apR[i], r);\n    }\n    out[0] = l * this.wet; out[1] = r * this.wet;\n  }\n}\nfunction makeLine(n) { return { buf: new Float32Array(Math.max(1, n)), i: 0, n: Math.max(1, n) }; }\nfunction ap(d, x) {\n  const b = d.buf[d.i];\n  const y = -x + b;\n  d.buf[d.i] = x + b * 0.5;\n  if (++d.i >= d.n) d.i = 0;\n  return y;\n}\n\n/* ---------- 出口のリミッター（事故よけ・ゼロ遅延） --------------------\n   先読みが無いので、いちばん最初の1発だけは追従が間に合わない。\n   （インパルスを入れると素で 4.98 倍が出た＝実測で見つけた）\n   → うしろに「やわらかい天井」を置いて、追従が間に合わない立ち上がりも\n      必ず天井の内側に収める。天井の75%までは1ビットも触らない。\n   ---------------------------------------------------------------------- */\nclass SafeLimiter {\n  prepare(sr) {\n    this.g = 1;\n    this.aAtk = Math.exp(-1 / (0.0005 * sr));\n    this.aRel = Math.exp(-1 / (0.150 * sr));\n    this.ceil = db2lin(-1.0);\n    this.knee = this.ceil * 0.75;\n  }\n  /** 左右をひとつのゲインで動かす（別々だと定位が揺れる）。out に書く。 */\n  stereo(l, r, out) {\n    const a = Math.max(l < 0 ? -l : l, r < 0 ? -r : r);\n    let t = 1;\n    if (a * this.g > this.ceil) t = this.ceil / (a > 1e-9 ? a : 1e-9);\n    const c = t < this.g ? this.aAtk : this.aRel;\n    this.g = t + (this.g - t) * c;\n    out[0] = this.soft(l * this.g);\n    out[1] = this.soft(r * this.g);\n  }\n  /** モノ1本ぶん（相手へ送る音はこちらを使う。専用の個体を持たせること） */\n  mono(x) {\n    const a = x < 0 ? -x : x;\n    let t = 1;\n    if (a * this.g > this.ceil) t = this.ceil / (a > 1e-9 ? a : 1e-9);\n    const c = t < this.g ? this.aAtk : this.aRel;\n    this.g = t + (this.g - t) * c;\n    return this.soft(x * this.g);\n  }\n  soft(y) {\n    const ay = y < 0 ? -y : y;\n    if (ay <= this.knee) return y;\n    const span = this.ceil - this.knee;\n    const shaped = this.knee + span * (1 - Math.exp(-(ay - this.knee) / span));\n    return y < 0 ? -shaped : shaped;\n  }\n}\n\n/* =====================================================================\n   声の道ぜんたい\n   ===================================================================== */\nclass VoiceChain {\n  constructor() {\n    this.hpf = new Biquad();\n    this.hum = new HumKiller();\n    this.gate = new Gate();\n    this.prox = new ProximityTamer();\n    this.smooth = new Smoother();\n    this.dees = new DeEsser();\n    this.cons = new ConsonantEnhancer();\n    this.comp = new Comp();\n    this.eqLo = new Biquad(); this.eqMid = new Biquad(); this.eqHi = new Biquad();\n    this.rev = new Reverb();\n    this.lim = new SafeLimiter();      // 自分の耳へ\n    this.limSend = new SafeLimiter();  // 相手へ送る音（別個体。片方の動きがもう片方に漏れない）\n    this._rv = [0, 0];\n    this._lr = [0, 0];\n    this.p = {\n      on: true,          // 声の道ぜんたい（false で完全素通し＝くらべる）\n      hpf: 80,           // Hz\n      hum: true,\n      gate: 0.35,\n      prox: 0.5,\n      smooth: 0.4,\n      dees: 0.4,\n      cons: 0.35,\n      comp: 0.45,\n      lo: 0, mid: 0, hi: 1.5,   // dB\n      rev: 0.25, revSize: 0.5,\n      wide: 0.35,        // 0..1 左右のひらき\n      gain: 1.0,         // しあげ音量（倍率）\n      sendRev: false,    // 相手へ送る音にも ひろがり を乗せるか（既定=乗せない）\n    };\n    this.meterIn = 0; this.meterOut = 0; this.grDb = 0;\n    this.learn = 0;\n  }\n\n  prepare(sr) {\n    this.sr = sr;\n    this.hpf.highpass(this.p.hpf, 0.7, sr); this.hpf.reset();\n    this.hum.prepare(sr);\n    this.gate.prepare(sr);\n    this.prox.prepare(sr);\n    this.smooth.prepare(sr);\n    this.dees.prepare(sr);\n    this.cons.prepare(sr);\n    this.comp.prepare(sr);\n    this.eqLo.lowShelf(180, this.p.lo, sr); this.eqLo.reset();\n    this.eqMid.peak(1000, 0.9, this.p.mid, sr); this.eqMid.reset();\n    this.eqHi.highShelf(6000, this.p.hi, sr); this.eqHi.reset();\n    this.rev.prepare(sr);\n    this.lim.prepare(sr);\n    this.limSend.prepare(sr);\n    this.applyParams();\n    this.mAtk = Math.exp(-1 / (0.001 * sr));\n    this.mRel = Math.exp(-1 / (0.220 * sr));\n  }\n\n  /** UI から来た値をまとめて反映（音声コールバックの外から呼ぶ） */\n  setParams(obj) {\n    Object.assign(this.p, obj);\n    this.applyParams();\n  }\n\n  applyParams() {\n    const p = this.p, sr = this.sr || 48000;\n    this.hpf.highpass(Math.max(20, p.hpf), 0.7, sr);\n    this.gate.set(p.gate);\n    this.prox.set(p.prox);\n    this.smooth.set(p.smooth);\n    this.dees.set(p.dees);\n    this.cons.set(p.cons);\n    this.comp.set(p.comp);\n    this.eqLo.lowShelf(180, p.lo, sr);\n    this.eqMid.peak(1000, 0.9, p.mid, sr);\n    this.eqHi.highShelf(6000, p.hi, sr);\n    this.rev.set(p.rev, p.revSize);\n  }\n\n  /** ハム学習を始める（静かにしてもらっている間だけ observe する） */\n  startLearn(seconds) { this.learn = Math.round((this.sr || 48000) * (seconds || 1.5)); }\n\n  /**\n   * モノ入力 → ステレオ出力。\n   * dryOut があれば「ひろがりを乗せる前のモノ」をそこへ書く（＝相手へ送る音）。\n   * VocalGzzio の じぶんモニター出力 と同じ考えかた。\n   */\n  process(inp, outL, outR, n, sendOut) {\n    const p = this.p;\n    if (!p.on) {\n      for (let i = 0; i < n; i++) {\n        const x = inp[i];\n        outL[i] = x; outR[i] = x;\n        if (sendOut) sendOut[i] = x;\n      }\n      this.meterIn = this.meterOut = peakOf(inp, n);\n      return;\n    }\n    const wide = p.wide;\n    const rv = this._rv;\n    let mi = this.meterIn, mo = this.meterOut;\n    for (let i = 0; i < n; i++) {\n      const x0 = inp[i];\n      const ax = Math.abs(x0);\n      mi = ax > mi ? ax + (mi - ax) * this.mAtk : ax + (mi - ax) * this.mRel;\n\n      let y = this.hpf.tick(x0);\n      if (this.learn > 0) { this.hum.observe(y); if (--this.learn === 0) this.hum.decide(); }\n      if (p.hum) y = this.hum.tick(y);\n      y = this.gate.tick(y);\n      y = this.prox.tick(y);\n      y = this.smooth.tick(y);\n      y = this.dees.tick(y);\n      y = this.cons.tick(y);\n      y = this.comp.tick(y);\n      y = this.eqLo.tick(y);\n      y = this.eqMid.tick(y);\n      y = this.eqHi.tick(y);\n      y *= p.gain;\n\n      // 相手へ送る音（ドライ寄り。既定でひろがりは乗せない）\n      const send = y;\n\n      this.rev.tick(y, rv);\n      let l = y + rv[0], r = y + rv[1];\n      // ひらき（Mid/Side で軽く広げる。モノ互換を壊さない範囲）\n      if (wide > 0) {\n        const m = (l + r) * 0.5, s = (l - r) * 0.5 * (1 + wide * 1.6);\n        l = m + s; r = m - s;\n      }\n      const lr = this._lr;\n      this.lim.stereo(l, r, lr);\n      l = lr[0]; r = lr[1];\n      outL[i] = l; outR[i] = r;\n      if (sendOut) sendOut[i] = this.limSend.mono(p.sendRev ? (l + r) * 0.5 : send);\n\n      const ay = l < 0 ? -l : l;\n      mo = ay > mo ? ay + (mo - ay) * this.mAtk : ay + (mo - ay) * this.mRel;\n    }\n    this.meterIn = mi; this.meterOut = mo;\n    this.grDb = this.comp.gr;\n  }\n}\n\nfunction peakOf(a, n) { let m = 0; for (let i = 0; i < n; i++) { const v = Math.abs(a[i]); if (v > m) m = v; } return m; }\n\n/* =====================================================================\n   BandFix風 しあげ（オフラインで走る。録り終わってから使う）\n   ===================================================================== */\n\n/** 区間ごとの実効ラウドネス（RMSを K っぽく重み付けした簡易版・dBFS） */\nfunction loudness(buf, sr) {\n  // K-weighting 近似: 高域シェルフ +4dB @1.5k と 60Hz HPF\n  const hp = new Biquad(); hp.highpass(60, 0.5, sr);\n  const sh = new Biquad(); sh.highShelf(1500, 4, sr);\n  let sum = 0, cnt = 0;\n  const win = Math.round(sr * 0.4), gate = [];\n  let acc = 0, k = 0;\n  for (let i = 0; i < buf.length; i++) {\n    const y = sh.tick(hp.tick(buf[i]));\n    acc += y * y;\n    if (++k >= win) { gate.push(acc / win); acc = 0; k = 0; }\n  }\n  if (!gate.length) return -70;\n  // 絶対ゲート -70LUFS 相当 + 相対ゲート -10dB\n  const abs = gate.filter(v => v > 1e-7);\n  if (!abs.length) return -70;\n  const mean = abs.reduce((a, b) => a + b, 0) / abs.length;\n  const rel = abs.filter(v => v > mean * 0.1);\n  const m2 = (rel.length ? rel : abs).reduce((a, b) => a + b, 0) / (rel.length || abs.length);\n  return -0.691 + 10 * Math.log10(Math.max(m2, 1e-12));\n}\n\n/** 2つの声が食い合う帯域をゆずり合わせる（軽い相補EQ）＋音量そろえ */\nfunction autoMix(tracks, sr, opt) {\n  // tracks: [{name, mono:Float32Array, targetLufs}] 先頭が主役\n  const o = Object.assign({ target: -16, duck: 1.5 }, opt || {});\n  const out = [];\n  for (let t = 0; t < tracks.length; t++) {\n    const tr = tracks[t];\n    const l = loudness(tr.mono, sr);\n    const gainDb = Math.max(-24, Math.min(24, o.target - l));\n    out.push({ name: tr.name, gainDb, lufs: l });\n  }\n  return out;\n}\n\n\n/* TuttiGzzio — 音のスレッド（AudioWorklet）\n   ここは 2.67ms（128サンプル / 48kHz）の締切で回る場所。\n   VocalGzzio の最重要教訓「音声コールバック内でメモリ確保しない」をそのまま守る。\n   録りの入れ物は最初に48枚用意して使い回す（渡したら返してもらう）。 */\n\nconst CHUNK = 12288;          // 0.256 秒 @48k\nconst POOL = 48;              // 12秒ぶん。返ってこなくてもこれだけは耐える\n\nclass VoiceProcessor extends AudioWorkletProcessor {\n  constructor() {\n    super();\n    this.chain = new VoiceChain();\n    this.chain.prepare(sampleRate);\n\n    this.free = [];\n    for (let i = 0; i < POOL; i++) this.free.push(new Float32Array(CHUNK));\n    this.cur = this.free.pop();\n    this.curLen = 0;\n    this.spare = new Float32Array(128);\n\n    this.recording = false;\n    this.recStartFrame = 0;\n    this.recFrames = 0;\n    this.starved = 0;\n    this.tick = 0;\n    this.peakIn = 0;\n    this.lateBlocks = 0;\n    this.lastEnd = 0;\n\n    this.port.onmessage = (e) => this.onMsg(e.data);\n    this.port.postMessage({ t: 'ready', sr: sampleRate });\n  }\n\n  onMsg(m) {\n    switch (m.t) {\n      case 'params': this.chain.setParams(m.p); break;\n      case 'learn': this.chain.startLearn(m.sec || 1.5); break;\n      case 'rec':\n        if (m.on && !this.recording) {\n          this.recording = true;\n          this.recStartFrame = currentFrame;\n          this.recFrames = 0;\n          this.curLen = 0;\n          this.starved = 0;\n          this.port.postMessage({ t: 'recStarted', frame: currentFrame, time: currentTime });\n        } else if (!m.on && this.recording) {\n          this.recording = false;\n          this.flush(true);\n          this.port.postMessage({ t: 'recStopped', frames: this.recFrames, starved: this.starved });\n        }\n        break;\n      case 'give':                          // 使い終わった入れ物が返ってきた\n        if (m.buf) this.free.push(new Float32Array(m.buf));\n        break;\n    }\n  }\n\n  flush(last) {\n    if (!this.cur || this.curLen === 0) { if (last) this.port.postMessage({ t: 'chunk', last: true, len: 0 }); return; }\n    const buf = this.cur.buffer;\n    this.port.postMessage({ t: 'chunk', buf, len: this.curLen, last: !!last }, [buf]);\n    this.cur = this.free.length ? this.free.pop() : null;\n    this.curLen = 0;\n    if (!this.cur) { this.starved++; this.cur = new Float32Array(CHUNK); }   // 非常口\n  }\n\n  process(inputs, outputs) {\n    const inCh = inputs[0] && inputs[0][0];\n    const out = outputs[0];\n    const n = out[0].length;\n    const src = inCh && inCh.length === n ? inCh : this.spare;\n    if (src === this.spare) this.spare.fill(0);\n\n    this.chain.process(src, out[0], out[1], n, out[2]);\n\n    if (this.recording) {\n      let k = 0;\n      while (k < n) {\n        const room = CHUNK - this.curLen;\n        const take = room < (n - k) ? room : (n - k);\n        // subarray は毎回 view を1つ作る＝コールバック内の確保。手で写す。\n        const dst = this.cur; let d = this.curLen;\n        for (let i = 0; i < take; i++) dst[d + i] = src[k + i];\n        this.curLen += take; k += take;\n        if (this.curLen >= CHUNK) this.flush(false);\n      }\n      this.recFrames += n;\n    }\n\n    if (++this.tick >= 24) {                 // だいたい 64ms ごと\n      this.tick = 0;\n      this.port.postMessage({\n        t: 'meter',\n        in: this.chain.meterIn, out: this.chain.meterOut, gr: this.chain.grDb,\n        recFrames: this.recFrames, hum: this.chain.hum.hz,\n        frame: currentFrame, time: currentTime, free: this.free.length,\n      });\n    }\n    return true;\n  }\n}\n\nregisterProcessor('voice', VoiceProcessor);\n";
 /* =====================================================================
-   TuttiGzzio v0.1.0 — ふたりでうたう（PWA）
+   ハウリング止め（出口の安全弁）
+   スピーカーで鳴らしながらモニターを返すと、マイク→出口→マイクの輪ができる。
+   「大きい」だけでは歌と区別できないので、3つ同時に見る:
+     ① 十分大きい ② 波高率が正弦に近い（＝倍音の無い純音になっている）
+     ③ ゆっくりした基準より上がり続けている（歌は基準が追いつくが、発振は追いつかない）
+   3つが 0.7秒そろって初めて下げる。下げたあとは 2秒の余韻を持つ（また鳴き出すため）。
+   ===================================================================== */
+class HowlGuard {
+  prepare(sr) {
+    this.sr = sr; this.on = true;
+    this.ms = 0; this.peak = 0; this.slow = 0;
+    this.aR = Math.exp(-1 / (0.030 * sr));
+    this.aP = Math.exp(-1 / (0.060 * sr));
+    this.aS = Math.exp(-1 / (1.200 * sr));
+    this.hold = 0; this.hang = 0; this.g = 1; this.engaged = false;
+    this.aAtk = Math.exp(-1 / (0.008 * sr));
+    this.aRel = Math.exp(-1 / (0.900 * sr));
+    this.th = db2lin(-24);
+    this.need = Math.round(sr * 0.7);
+    this.hangLen = Math.round(sr * 2.0);
+    this.cut = db2lin(-18);
+    this.tripped = 0;
+    // ★ 基準を 0 から立ち上げると、最初の1〜2秒はどんな音でも「上がり続けている」に
+    //    見えてしまい、大きなロングトーンで誤爆する（実測で踏んだ）。最初は素直に追う。
+    this.warm = 0; this.warmN = Math.round(sr * 0.4);
+  }
+  set(on) { this.on = !!on; if (!on) { this.hold = 0; this.hang = 0; } }
+  tick(x) {
+    if (!this.on) return x;
+    const a = x < 0 ? -x : x;
+    this.ms += (x * x - this.ms) * (1 - this.aR);
+    this.peak = a > this.peak ? a : a + (this.peak - a) * this.aP;
+    const r = Math.sqrt(this.ms);
+    if (this.warm < this.warmN) { this.warm++; this.slow = r; }
+    else this.slow += (r - this.slow) * (1 - this.aS);
+    const crest = r > 1e-6 ? this.peak / r : 99;
+    // 純音は波高率 1.41。歌は倍音があるので 1.8〜8。1.65 より下は「音楽ではない」。
+    const suspicious = (r > this.th) && (crest < 1.65) && (r > this.slow * 1.20);
+    if (suspicious) { if (this.hold < this.need) this.hold++; }
+    else { this.hold -= 6; if (this.hold < 0) this.hold = 0; }
+    if (this.hold >= this.need) { if (this.hang === 0) this.tripped++; this.hang = this.hangLen; }
+    else if (this.hang > 0) this.hang--;
+    const t = this.hang > 0 ? this.cut : 1;
+    this.engaged = this.hang > 0;
+    const c = t < this.g ? this.aAtk : this.aRel;
+    this.g = t + (this.g - t) * c;
+    return x * this.g;
+  }
+}
+
+/* =====================================================================
+   往復のずれを測る（出口→耳→マイク の合計）
+   BT でも有線でもスピーカーでも、同じやり方で測れる。
+   ===================================================================== */
+
+/** 測定用のチャープ（ハン窓つき。短くて聞こえが柔らかく、相関が鋭い） */
+function makeChirp(sr, ms, f0, f1) {
+  ms = ms || 45; f0 = f0 || 700; f1 = f1 || 4200;
+  const n = Math.max(8, Math.round(sr * ms / 1000));
+  const a = new Float32Array(n);
+  const T = n / sr, k = (f1 - f0) / T;
+  for (let i = 0; i < n; i++) {
+    const t = i / sr;
+    const w = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / (n - 1));
+    a[i] = Math.sin(2 * Math.PI * (f0 * t + 0.5 * k * t * t)) * w;
+  }
+  return a;
+}
+
+/**
+ * rec の中から ref がいちばん合う位置を探す。
+ * 返り値: { samples, ms, score } — score は「1番目の山 ÷ 2番目の山」。
+ * これが小さいときは自信が無いので採用しない（VocalGzzio の「汚れた学習を採用しない」と同じ作法）。
+ */
+function findDelay(ref, rec, sr, maxMs, minMs) {
+  const maxLag = Math.min(rec.length - ref.length, Math.round(sr * (maxMs || 700) / 1000));
+  const minLag = Math.max(0, Math.round(sr * (minMs || 0) / 1000));
+  if (maxLag <= minLag) return { samples: -1, ms: -1, score: 0 };
+  const n = ref.length;
+  let rn = 0; for (let i = 0; i < n; i++) rn += ref[i] * ref[i];
+  rn = Math.sqrt(rn) || 1;
+  const corr = new Float32Array(maxLag - minLag + 1);
+  for (let d = minLag; d <= maxLag; d++) {
+    let s = 0, e = 0;
+    for (let i = 0; i < n; i++) { const v = rec[d + i]; s += ref[i] * v; e += v * v; }
+    corr[d - minLag] = e > 1e-12 ? Math.abs(s) / (rn * Math.sqrt(e)) : 0;
+  }
+  let best = 0, bi = 0;
+  for (let i = 0; i < corr.length; i++) if (corr[i] > best) { best = corr[i]; bi = i; }
+  // 2番目の山は、1番目から 2ms 以上はなれた所で探す
+  const guard = Math.round(sr * 0.002);
+  let second = 0;
+  for (let i = 0; i < corr.length; i++) {
+    if (Math.abs(i - bi) <= guard) continue;
+    if (corr[i] > second) second = corr[i];
+  }
+  const d = bi + minLag;
+  return { samples: d, ms: d / sr * 1000, score: second > 1e-6 ? best / second : (best > 0.2 ? 99 : 0), peak: best };
+}
+
+const WORKLET_SOURCE = "/* =====================================================================\n   TuttiGzzio — 声の道（ゼロ遅延DSP）\n   VocalGzzio v3.1 の「セッション構成」＝遅延を足さない部品だけを移植したもの。\n   ・ぜんぶ IIR / 一次遅れ / 帯域分割。先読みバッファは1つも無い。\n   ・process() の中で new / 配列確保をしない（VocalGzzio の最重要教訓）。\n   ・Node からも import できる。tools/test_dsp.mjs が遅延台帳を作る。\n   ===================================================================== */\n\n'use strict';\n\nconst TAU = Math.PI * 2;\n\n/* ---------- 小さな部品 ------------------------------------------------ */\n\n/** 一次ローパス（係数は prepare で確定。process 内で作らない） */\nfunction onePole(hz, sr) {\n  return 1 - Math.exp(-TAU * hz / sr);\n}\n\n/** dB → 倍率 */\nfunction db2lin(db) { return Math.pow(10, db / 20); }\n/** 倍率 → dB（0で -inf にならないように下駄） */\nfunction lin2db(x) { return 20 * Math.log10(Math.max(x, 1e-9)); }\n\n/** 双二次（RBJ）。係数は「入れ物へ代入」する形。確保しない。 */\nclass Biquad {\n  constructor() {\n    this.b0 = 1; this.b1 = 0; this.b2 = 0; this.a1 = 0; this.a2 = 0;\n    this.z1 = 0; this.z2 = 0;\n  }\n  reset() { this.z1 = 0; this.z2 = 0; }\n  /** 直接形II転置。1サンプル。 */\n  tick(x) {\n    const y = this.b0 * x + this.z1;\n    this.z1 = this.b1 * x - this.a1 * y + this.z2;\n    this.z2 = this.b2 * x - this.a2 * y;\n    return y;\n  }\n  _norm(b0, b1, b2, a0, a1, a2) {\n    const ia = 1 / a0;\n    this.b0 = b0 * ia; this.b1 = b1 * ia; this.b2 = b2 * ia;\n    this.a1 = a1 * ia; this.a2 = a2 * ia;\n  }\n  highpass(f, q, sr) {\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / (2 * q);\n    this._norm((1 + c) / 2, -(1 + c), (1 + c) / 2, 1 + al, -2 * c, 1 - al);\n  }\n  lowpass(f, q, sr) {\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / (2 * q);\n    this._norm((1 - c) / 2, 1 - c, (1 - c) / 2, 1 + al, -2 * c, 1 - al);\n  }\n  notch(f, q, sr) {\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / (2 * q);\n    this._norm(1, -2 * c, 1, 1 + al, -2 * c, 1 - al);\n  }\n  peak(f, q, gainDb, sr) {\n    const A = Math.pow(10, gainDb / 40);\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / (2 * q);\n    this._norm(1 + al * A, -2 * c, 1 - al * A, 1 + al / A, -2 * c, 1 - al / A);\n  }\n  lowShelf(f, gainDb, sr) {\n    const A = Math.pow(10, gainDb / 40);\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / 2 * Math.sqrt(2);\n    const sq = 2 * Math.sqrt(A) * al;\n    this._norm(\n      A * ((A + 1) - (A - 1) * c + sq),\n      2 * A * ((A - 1) - (A + 1) * c),\n      A * ((A + 1) - (A - 1) * c - sq),\n      (A + 1) + (A - 1) * c + sq,\n      -2 * ((A - 1) + (A + 1) * c),\n      (A + 1) + (A - 1) * c - sq\n    );\n  }\n  highShelf(f, gainDb, sr) {\n    const A = Math.pow(10, gainDb / 40);\n    const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n    const al = s / 2 * Math.sqrt(2);\n    const sq = 2 * Math.sqrt(A) * al;\n    this._norm(\n      A * ((A + 1) + (A - 1) * c + sq),\n      -2 * A * ((A - 1) + (A + 1) * c),\n      A * ((A + 1) + (A - 1) * c - sq),\n      (A + 1) - (A - 1) * c + sq,\n      2 * ((A - 1) - (A + 1) * c),\n      (A + 1) - (A - 1) * c - sq\n    );\n  }\n}\n\n/* ---------- ハムキラー（50/60Hz 自動判定） ----------------------------\n   日本は東50Hz／西60Hz。「どっちですか」と聞かないのが VocalGzzio の作法。\n   静かなところで 50系(50,100,150,200) と 60系(60,120,180,240) の\n   エネルギーを比べ、勝ったほうにQの高いノッチを立てる。\n   ---------------------------------------------------------------------- */\nclass HumKiller {\n  constructor() {\n    this.p50 = [new Biquad(), new Biquad(), new Biquad(), new Biquad()];\n    this.p60 = [new Biquad(), new Biquad(), new Biquad(), new Biquad()];\n    this.n = [new Biquad(), new Biquad(), new Biquad(), new Biquad()];\n    this.e50 = 0; this.e60 = 0; this.decided = 0; this.hz = 0; this.on = false;\n  }\n  prepare(sr) {\n    this.sr = sr;\n    for (let i = 0; i < 4; i++) {\n      this.p50[i].peak(50 * (i + 1), 30, 0, sr); this.p50[i].bandpassLike = true;\n      this.p50[i].lowpass(1, 0.7, sr); // 一旦潰してから下で作り直す\n    }\n    // 検出用は帯域通過（peak ではなく notch の補集合を使わず、素直に BPF を作る）\n    for (let i = 0; i < 4; i++) {\n      bandpass(this.p50[i], 50 * (i + 1), 24, sr);\n      bandpass(this.p60[i], 60 * (i + 1), 24, sr);\n      this.n[i].notch(50 * (i + 1), 24, sr);\n      this.n[i].reset();\n    }\n    this.e50 = 0; this.e60 = 0; this.decided = 0; this.hz = 0; this.on = false;\n    this.coef = onePole(0.5, sr);\n  }\n  /** 判定だけ（静かな区間で呼ぶ）。音は変えない。 */\n  observe(x) {\n    let a = 0, b = 0;\n    for (let i = 0; i < 4; i++) { const u = this.p50[i].tick(x); a += u * u; }\n    for (let i = 0; i < 4; i++) { const u = this.p60[i].tick(x); b += u * u; }\n    this.e50 += (a - this.e50) * this.coef;\n    this.e60 += (b - this.e60) * this.coef;\n  }\n  /** 判定を確定してノッチを張る。静かな区間を一定時間見たあとで1回だけ。 */\n  decide() {\n    const tot = this.e50 + this.e60;\n    if (tot < 1e-12) { this.on = false; return 0; }   // ハムが無い＝何もしない\n    const hz = this.e50 > this.e60 * 1.2 ? 50 : (this.e60 > this.e50 * 1.2 ? 60 : 0);\n    if (hz === 0) { this.on = false; return 0; }      // 差がつかない＝決め打たない\n    for (let i = 0; i < 4; i++) { this.n[i].notch(hz * (i + 1), 24, this.sr); this.n[i].reset(); }\n    this.hz = hz; this.on = true; this.decided = 1;\n    return hz;\n  }\n  tick(x) {\n    if (!this.on) return x;\n    let y = x;\n    for (let i = 0; i < 4; i++) y = this.n[i].tick(y);\n    return y;\n  }\n}\n\nfunction bandpass(bq, f, q, sr) {\n  const w = TAU * Math.min(f, sr * 0.45) / sr, c = Math.cos(w), s = Math.sin(w);\n  const al = s / (2 * q);\n  bq._norm(al, 0, -al, 1 + al, -2 * c, 1 - al);\n  bq.reset();\n}\n\n/* ---------- ノイズゲート（ヒステリシス付き・ゼロ遅延） ---------------- */\nclass Gate {\n  prepare(sr) {\n    this.sr = sr;\n    this.env = 0; this.g = 1;\n    this.aAtk = Math.exp(-1 / (0.002 * sr));\n    this.aRel = Math.exp(-1 / (0.080 * sr));\n    this.gAtk = Math.exp(-1 / (0.003 * sr));\n    this.gRel = Math.exp(-1 / (0.120 * sr));\n    this.open = false;\n    this.thOpen = db2lin(-46); this.thShut = db2lin(-52);\n    this.floor = db2lin(-24);\n  }\n  /** amount 0..1 : 0で完全素通し */\n  set(amount) {\n    const a = Math.max(0, Math.min(1, amount));\n    this.amount = a;\n    // 効きの強さ = しきい値と下げ幅の両方\n    this.thOpen = db2lin(-52 + 12 * a);\n    this.thShut = db2lin(-58 + 12 * a);\n    this.floor = db2lin(-6 - 30 * a);\n  }\n  tick(x) {\n    const a = Math.abs(x);\n    const c = a > this.env ? this.aAtk : this.aRel;\n    this.env = a + (this.env - a) * c;\n    if (this.open) { if (this.env < this.thShut) this.open = false; }\n    else { if (this.env > this.thOpen) this.open = true; }\n    const t = this.open ? 1 : this.floor;\n    const gc = t > this.g ? this.gAtk : this.gRel;\n    this.g = t + (this.g - t) * gc;\n    return x * this.g;\n  }\n}\n\n/* ---------- 近接効果ならし（動的ローシェルフ） ------------------------\n   マイクに近づくと低域が持ち上がる。低域と全体の比を見て、盛れている\n   ぶんだけシェルフで戻す。先読みが要らないのでゼロ遅延で作れる。\n   ---------------------------------------------------------------------- */\nclass ProximityTamer {\n  constructor() { this.lo = new Biquad(); this.sh = new Biquad(); }\n  prepare(sr) {\n    this.sr = sr;\n    this.lo.lowpass(180, 0.7, sr); this.lo.reset();\n    this.sh.lowShelf(220, 0, sr); this.sh.reset();\n    this.eLo = 0; this.eAll = 0; this.cut = 0; this.target = 0;\n    this.c = onePole(6, sr);      // 比の追従\n    this.cg = onePole(2.5, sr);   // シェルフの動き（ゆっくり）\n    this.amount = 0; this.recalc = 0;\n  }\n  set(amount) { this.amount = Math.max(0, Math.min(1, amount)); }\n  tick(x) {\n    if (this.amount <= 0) return x;\n    const l = this.lo.tick(x);\n    this.eLo += (l * l - this.eLo) * this.c;\n    this.eAll += (x * x - this.eAll) * this.c;\n    if (this.eAll > 1e-9) {\n      const ratio = this.eLo / this.eAll;          // 0..1\n      // 0.45 を「ふつう」とみなし、超えたぶんだけ削る（最大 -9dB）\n      const over = Math.max(0, ratio - 0.45) / 0.55;\n      this.target = -9 * over * this.amount;\n    }\n    this.cut += (this.target - this.cut) * this.cg;\n    if (++this.recalc >= 256) {                    // 係数の作り直しは間引く\n      this.recalc = 0;\n      this.sh.lowShelf(220, this.cut, this.sr);\n    }\n    return this.sh.tick(x);\n  }\n}\n\n/* ---------- なめらか（動的レゾナンス抑制の簡易版） --------------------\n   3本の可変ピークで、突出している帯域だけ動的に押さえる。\n   本家 Resonance::Tamer の考え方を、帯域を固定して軽くしたもの。\n   ---------------------------------------------------------------------- */\nclass Smoother {\n  constructor() {\n    this.f = [400, 1200, 3200];\n    this.det = [new Biquad(), new Biquad(), new Biquad()];\n    this.cut = [new Biquad(), new Biquad(), new Biquad()];\n    this.e = [0, 0, 0]; this.g = [0, 0, 0]; this.eAll = 0;\n  }\n  prepare(sr) {\n    this.sr = sr; this.amount = 0; this.recalc = 0;\n    for (let i = 0; i < 3; i++) {\n      bandpass(this.det[i], this.f[i], 2.2, sr);\n      this.cut[i].peak(this.f[i], 2.2, 0, sr); this.cut[i].reset();\n      this.e[i] = 0; this.g[i] = 0;\n    }\n    this.c = onePole(12, sr); this.cg = onePole(8, sr);\n  }\n  set(amount) { this.amount = Math.max(0, Math.min(1, amount)); }\n  tick(x) {\n    if (this.amount <= 0) return x;\n    this.eAll += (x * x - this.eAll) * this.c;\n    for (let i = 0; i < 3; i++) {\n      const u = this.det[i].tick(x);\n      this.e[i] += (u * u - this.e[i]) * this.c;\n    }\n    if (++this.recalc >= 128) {\n      this.recalc = 0;\n      for (let i = 0; i < 3; i++) {\n        let t = 0;\n        if (this.eAll > 1e-9) {\n          const r = this.e[i] / this.eAll;\n          const over = Math.max(0, r - 0.30) / 0.70;\n          t = -8 * over * this.amount;\n        }\n        this.g[i] += (t - this.g[i]) * 0.5;\n        this.cut[i].peak(this.f[i], 2.2, this.g[i], this.sr);\n      }\n    }\n    let y = x;\n    for (let i = 0; i < 3; i++) y = this.cut[i].tick(y);\n    return y;\n  }\n}\n\n/* ---------- ディエッサー（スプリットバンド・ゼロ遅延） ---------------- */\nclass DeEsser {\n  constructor() { this.hp = new Biquad(); this.hp2 = new Biquad(); }\n  prepare(sr) {\n    this.sr = sr;\n    this.hp.highpass(5200, 0.7, sr); this.hp.reset();\n    this.hp2.highpass(5200, 0.7, sr); this.hp2.reset();\n    this.env = 0; this.g = 1; this.amount = 0;\n    this.aAtk = Math.exp(-1 / (0.0006 * sr));\n    this.aRel = Math.exp(-1 / (0.040 * sr));\n    this.th = db2lin(-30);\n  }\n  set(amount) {\n    this.amount = Math.max(0, Math.min(1, amount));\n    this.th = db2lin(-18 - 18 * this.amount);\n    this.maxCut = 14 * this.amount;\n  }\n  tick(x) {\n    if (this.amount <= 0) return x;\n    const hi = this.hp.tick(x);\n    const a = Math.abs(hi);\n    const c = a > this.env ? this.aAtk : this.aRel;\n    this.env = a + (this.env - a) * c;\n    let cut = 0;\n    if (this.env > this.th) cut = Math.min(this.maxCut, (lin2db(this.env) - lin2db(this.th)) * 0.8);\n    const gain = db2lin(-cut);\n    // 高域だけ下げる = 全体 - 高域 + 高域*gain\n    return x + hi * (gain - 1);\n  }\n}\n\n/* ---------- 子音エンハンサー（言葉を立てる） --------------------------\n   トランジェント（速い包絡 > 遅い包絡）のときだけ 2〜6kHz を一瞬持ち上げる。\n   ---------------------------------------------------------------------- */\nclass ConsonantEnhancer {\n  constructor() { this.bp = new Biquad(); }\n  prepare(sr) {\n    this.sr = sr;\n    bandpass(this.bp, 3400, 0.9, sr);\n    this.fast = 0; this.slow = 0; this.g = 0; this.amount = 0;\n    this.aF = Math.exp(-1 / (0.0015 * sr));\n    this.aS = Math.exp(-1 / (0.050 * sr));\n    this.aG = Math.exp(-1 / (0.030 * sr));\n  }\n  set(amount) { this.amount = Math.max(0, Math.min(1, amount)); }\n  tick(x) {\n    if (this.amount <= 0) return x;\n    const a = Math.abs(x);\n    this.fast = a + (this.fast - a) * (a > this.fast ? this.aF : this.aF);\n    this.slow = a + (this.slow - a) * this.aS;\n    let t = 0;\n    if (this.slow > 1e-5 && this.fast > this.slow * 1.6) t = 1;\n    this.g = t + (this.g - t) * this.aG;\n    return x + this.bp.tick(x) * this.g * this.amount * 1.6;\n  }\n}\n\n/* ---------- コンプ（ゼロ遅延・ソフトニー） ---------------------------- */\nclass Comp {\n  prepare(sr) {\n    this.sr = sr; this.env = 0; this.gr = 0; this.amount = 0;\n    this.aAtk = Math.exp(-1 / (0.006 * sr));\n    this.aRel = Math.exp(-1 / (0.120 * sr));\n    this.th = -18; this.ratio = 2.5; this.knee = 8; this.make = 1;\n  }\n  set(amount) {\n    const a = Math.max(0, Math.min(1, amount));\n    this.amount = a;\n    this.th = -8 - 22 * a;          // -8 → -30 dB\n    this.ratio = 1.5 + 3.5 * a;     // 1.5 → 5\n    this.make = db2lin((0 - this.th) * (1 - 1 / this.ratio) * 0.55);\n  }\n  tick(x) {\n    if (this.amount <= 0) return x;\n    const a = Math.abs(x);\n    const c = a > this.env ? this.aAtk : this.aRel;\n    this.env = a + (this.env - a) * c;\n    const db = lin2db(this.env);\n    let over = db - this.th;\n    let cut = 0;\n    if (over > this.knee / 2) cut = over - over / this.ratio;\n    else if (over > -this.knee / 2) {\n      const t = over + this.knee / 2;\n      cut = (1 - 1 / this.ratio) * t * t / (2 * this.knee);\n    }\n    this.gr = cut;\n    return x * db2lin(-cut) * this.make;\n  }\n}\n\n/* ---------- ひろがり（Schroeder リバーブ・モノ入力→ステレオ） -------- */\nconst COMB_L = [1116, 1188, 1277, 1356, 1422, 1491, 1557, 1617];\nconst ALLP_L = [556, 441, 341, 225];\nconst SPREAD = 23;\n\nclass Reverb {\n  prepare(sr) {\n    const k = sr / 44100;\n    this.combL = []; this.combR = []; this.apL = []; this.apR = [];\n    for (let i = 0; i < 8; i++) {\n      this.combL.push(makeLine(Math.round(COMB_L[i] * k)));\n      this.combR.push(makeLine(Math.round((COMB_L[i] + SPREAD) * k)));\n    }\n    for (let i = 0; i < 4; i++) {\n      this.apL.push(makeLine(Math.round(ALLP_L[i] * k)));\n      this.apR.push(makeLine(Math.round((ALLP_L[i] + SPREAD) * k)));\n    }\n    this.fL = new Float32Array(8); this.fR = new Float32Array(8);\n    this.damp = 0.32; this.feed = 0.80; this.wet = 0; this.preHp = new Biquad();\n    this.preHp.highpass(280, 0.7, sr); this.preHp.reset();\n  }\n  set(amount, size) {\n    this.wet = Math.max(0, Math.min(1, amount)) * 0.55;\n    const s = Math.max(0, Math.min(1, size === undefined ? 0.5 : size));\n    this.feed = 0.74 + 0.20 * s;\n    this.damp = 0.45 - 0.22 * s;\n  }\n  /** モノ x を受けて [l, r] のウェットぶんを out[0],out[1] に足す */\n  tick(x, out) {\n    if (this.wet <= 0) { out[0] = 0; out[1] = 0; return; }\n    const inp = this.preHp.tick(x) * 0.22;\n    let l = 0, r = 0;\n    for (let i = 0; i < 8; i++) {\n      const cl = this.combL[i], cr = this.combR[i];\n      let y = cl.buf[cl.i];\n      this.fL[i] = y * (1 - this.damp) + this.fL[i] * this.damp;\n      cl.buf[cl.i] = inp + this.fL[i] * this.feed;\n      if (++cl.i >= cl.n) cl.i = 0;\n      l += y;\n      y = cr.buf[cr.i];\n      this.fR[i] = y * (1 - this.damp) + this.fR[i] * this.damp;\n      cr.buf[cr.i] = inp + this.fR[i] * this.feed;\n      if (++cr.i >= cr.n) cr.i = 0;\n      r += y;\n    }\n    for (let i = 0; i < 4; i++) {\n      l = ap(this.apL[i], l); r = ap(this.apR[i], r);\n    }\n    out[0] = l * this.wet; out[1] = r * this.wet;\n  }\n}\nfunction makeLine(n) { return { buf: new Float32Array(Math.max(1, n)), i: 0, n: Math.max(1, n) }; }\nfunction ap(d, x) {\n  const b = d.buf[d.i];\n  const y = -x + b;\n  d.buf[d.i] = x + b * 0.5;\n  if (++d.i >= d.n) d.i = 0;\n  return y;\n}\n\n/* ---------- 出口のリミッター（事故よけ・ゼロ遅延） --------------------\n   先読みが無いので、いちばん最初の1発だけは追従が間に合わない。\n   （インパルスを入れると素で 4.98 倍が出た＝実測で見つけた）\n   → うしろに「やわらかい天井」を置いて、追従が間に合わない立ち上がりも\n      必ず天井の内側に収める。天井の75%までは1ビットも触らない。\n   ---------------------------------------------------------------------- */\nclass SafeLimiter {\n  prepare(sr) {\n    this.g = 1;\n    this.aAtk = Math.exp(-1 / (0.0005 * sr));\n    this.aRel = Math.exp(-1 / (0.150 * sr));\n    this.ceil = db2lin(-1.0);\n    this.knee = this.ceil * 0.75;\n  }\n  /** 左右をひとつのゲインで動かす（別々だと定位が揺れる）。out に書く。 */\n  stereo(l, r, out) {\n    const a = Math.max(l < 0 ? -l : l, r < 0 ? -r : r);\n    let t = 1;\n    if (a * this.g > this.ceil) t = this.ceil / (a > 1e-9 ? a : 1e-9);\n    const c = t < this.g ? this.aAtk : this.aRel;\n    this.g = t + (this.g - t) * c;\n    out[0] = this.soft(l * this.g);\n    out[1] = this.soft(r * this.g);\n  }\n  /** モノ1本ぶん（相手へ送る音はこちらを使う。専用の個体を持たせること） */\n  mono(x) {\n    const a = x < 0 ? -x : x;\n    let t = 1;\n    if (a * this.g > this.ceil) t = this.ceil / (a > 1e-9 ? a : 1e-9);\n    const c = t < this.g ? this.aAtk : this.aRel;\n    this.g = t + (this.g - t) * c;\n    return this.soft(x * this.g);\n  }\n  soft(y) {\n    const ay = y < 0 ? -y : y;\n    if (ay <= this.knee) return y;\n    const span = this.ceil - this.knee;\n    const shaped = this.knee + span * (1 - Math.exp(-(ay - this.knee) / span));\n    return y < 0 ? -shaped : shaped;\n  }\n}\n\n/* =====================================================================\n   声の道ぜんたい\n   ===================================================================== */\nclass VoiceChain {\n  constructor() {\n    this.hpf = new Biquad();\n    this.hum = new HumKiller();\n    this.gate = new Gate();\n    this.prox = new ProximityTamer();\n    this.smooth = new Smoother();\n    this.dees = new DeEsser();\n    this.cons = new ConsonantEnhancer();\n    this.comp = new Comp();\n    this.eqLo = new Biquad(); this.eqMid = new Biquad(); this.eqHi = new Biquad();\n    this.rev = new Reverb();\n    this.lim = new SafeLimiter();      // 自分の耳へ\n    this.howl = new HowlGuard();       // ハウリング止め（自分の耳へ返す側だけ）\n    this.limSend = new SafeLimiter();  // 相手へ送る音（別個体。片方の動きがもう片方に漏れない）\n    this._rv = [0, 0];\n    this._lr = [0, 0];\n    this.p = {\n      on: true,          // 声の道ぜんたい（false で完全素通し＝くらべる）\n      hpf: 80,           // Hz\n      hum: true,\n      gate: 0.35,\n      prox: 0.5,\n      smooth: 0.4,\n      dees: 0.4,\n      cons: 0.35,\n      comp: 0.45,\n      lo: 0, mid: 0, hi: 1.5,   // dB\n      rev: 0.25, revSize: 0.5,\n      howl: true,        // ハウリング止め（スピーカーで使うとき用）\n      wide: 0.35,        // 0..1 左右のひらき\n      gain: 1.0,         // しあげ音量（倍率）\n      sendRev: false,    // 相手へ送る音にも ひろがり を乗せるか（既定=乗せない）\n    };\n    this.meterIn = 0; this.meterOut = 0; this.grDb = 0;\n    this.learn = 0;\n  }\n\n  prepare(sr) {\n    this.sr = sr;\n    this.hpf.highpass(this.p.hpf, 0.7, sr); this.hpf.reset();\n    this.hum.prepare(sr);\n    this.gate.prepare(sr);\n    this.prox.prepare(sr);\n    this.smooth.prepare(sr);\n    this.dees.prepare(sr);\n    this.cons.prepare(sr);\n    this.comp.prepare(sr);\n    this.eqLo.lowShelf(180, this.p.lo, sr); this.eqLo.reset();\n    this.eqMid.peak(1000, 0.9, this.p.mid, sr); this.eqMid.reset();\n    this.eqHi.highShelf(6000, this.p.hi, sr); this.eqHi.reset();\n    this.rev.prepare(sr);\n    this.lim.prepare(sr);\n    this.limSend.prepare(sr);\n    this.howl.prepare(sr);\n    this.applyParams();\n    this.mAtk = Math.exp(-1 / (0.001 * sr));\n    this.mRel = Math.exp(-1 / (0.220 * sr));\n  }\n\n  /** UI から来た値をまとめて反映（音声コールバックの外から呼ぶ） */\n  setParams(obj) {\n    Object.assign(this.p, obj);\n    this.applyParams();\n  }\n\n  applyParams() {\n    const p = this.p, sr = this.sr || 48000;\n    this.hpf.highpass(Math.max(20, p.hpf), 0.7, sr);\n    this.gate.set(p.gate);\n    this.prox.set(p.prox);\n    this.smooth.set(p.smooth);\n    this.dees.set(p.dees);\n    this.cons.set(p.cons);\n    this.comp.set(p.comp);\n    this.eqLo.lowShelf(180, p.lo, sr);\n    this.eqMid.peak(1000, 0.9, p.mid, sr);\n    this.eqHi.highShelf(6000, p.hi, sr);\n    this.rev.set(p.rev, p.revSize);\n    this.howl.set(p.howl !== false);\n  }\n\n  /** ハム学習を始める（静かにしてもらっている間だけ observe する） */\n  startLearn(seconds) { this.learn = Math.round((this.sr || 48000) * (seconds || 1.5)); }\n\n  /**\n   * モノ入力 → ステレオ出力。\n   * dryOut があれば「ひろがりを乗せる前のモノ」をそこへ書く（＝相手へ送る音）。\n   * VocalGzzio の じぶんモニター出力 と同じ考えかた。\n   */\n  process(inp, outL, outR, n, sendOut) {\n    const p = this.p;\n    if (!p.on) {\n      for (let i = 0; i < n; i++) {\n        const x = inp[i];\n        outL[i] = x; outR[i] = x;\n        if (sendOut) sendOut[i] = x;\n      }\n      this.meterIn = this.meterOut = peakOf(inp, n);\n      return;\n    }\n    const wide = p.wide;\n    const rv = this._rv;\n    let mi = this.meterIn, mo = this.meterOut;\n    for (let i = 0; i < n; i++) {\n      const x0 = inp[i];\n      const ax = Math.abs(x0);\n      mi = ax > mi ? ax + (mi - ax) * this.mAtk : ax + (mi - ax) * this.mRel;\n\n      let y = this.hpf.tick(x0);\n      if (this.learn > 0) { this.hum.observe(y); if (--this.learn === 0) this.hum.decide(); }\n      if (p.hum) y = this.hum.tick(y);\n      y = this.gate.tick(y);\n      y = this.prox.tick(y);\n      y = this.smooth.tick(y);\n      y = this.dees.tick(y);\n      y = this.cons.tick(y);\n      y = this.comp.tick(y);\n      y = this.eqLo.tick(y);\n      y = this.eqMid.tick(y);\n      y = this.eqHi.tick(y);\n      y *= p.gain;\n\n      // 相手へ送る音（ドライ寄り。既定でひろがりは乗せない）\n      const send = y;\n\n      this.rev.tick(y, rv);\n      let l = y + rv[0], r = y + rv[1];\n      // ひらき（Mid/Side で軽く広げる。モノ互換を壊さない範囲）\n      if (wide > 0) {\n        const m = (l + r) * 0.5, s = (l - r) * 0.5 * (1 + wide * 1.6);\n        l = m + s; r = m - s;\n      }\n      // ハウリング止めは「自分の耳へ返す側」だけ。相手へ送る音は輪に入らない。\n      l = this.howl.tick(l); r = r * this.howl.g;\n      const lr = this._lr;\n      this.lim.stereo(l, r, lr);\n      l = lr[0]; r = lr[1];\n      outL[i] = l; outR[i] = r;\n      if (sendOut) sendOut[i] = this.limSend.mono(p.sendRev ? (l + r) * 0.5 : send);\n\n      const ay = l < 0 ? -l : l;\n      mo = ay > mo ? ay + (mo - ay) * this.mAtk : ay + (mo - ay) * this.mRel;\n    }\n    this.meterIn = mi; this.meterOut = mo;\n    this.grDb = this.comp.gr;\n  }\n}\n\nfunction peakOf(a, n) { let m = 0; for (let i = 0; i < n; i++) { const v = Math.abs(a[i]); if (v > m) m = v; } return m; }\n\n/* =====================================================================\n   BandFix風 しあげ（オフラインで走る。録り終わってから使う）\n   ===================================================================== */\n\n/** 区間ごとの実効ラウドネス（RMSを K っぽく重み付けした簡易版・dBFS） */\nfunction loudness(buf, sr) {\n  // K-weighting 近似: 高域シェルフ +4dB @1.5k と 60Hz HPF\n  const hp = new Biquad(); hp.highpass(60, 0.5, sr);\n  const sh = new Biquad(); sh.highShelf(1500, 4, sr);\n  let sum = 0, cnt = 0;\n  const win = Math.round(sr * 0.4), gate = [];\n  let acc = 0, k = 0;\n  for (let i = 0; i < buf.length; i++) {\n    const y = sh.tick(hp.tick(buf[i]));\n    acc += y * y;\n    if (++k >= win) { gate.push(acc / win); acc = 0; k = 0; }\n  }\n  if (!gate.length) return -70;\n  // 絶対ゲート -70LUFS 相当 + 相対ゲート -10dB\n  const abs = gate.filter(v => v > 1e-7);\n  if (!abs.length) return -70;\n  const mean = abs.reduce((a, b) => a + b, 0) / abs.length;\n  const rel = abs.filter(v => v > mean * 0.1);\n  const m2 = (rel.length ? rel : abs).reduce((a, b) => a + b, 0) / (rel.length || abs.length);\n  return -0.691 + 10 * Math.log10(Math.max(m2, 1e-12));\n}\n\n/** 2つの声が食い合う帯域をゆずり合わせる（軽い相補EQ）＋音量そろえ */\nfunction autoMix(tracks, sr, opt) {\n  // tracks: [{name, mono:Float32Array, targetLufs}] 先頭が主役\n  const o = Object.assign({ target: -16, duck: 1.5 }, opt || {});\n  const out = [];\n  for (let t = 0; t < tracks.length; t++) {\n    const tr = tracks[t];\n    const l = loudness(tr.mono, sr);\n    const gainDb = Math.max(-24, Math.min(24, o.target - l));\n    out.push({ name: tr.name, gainDb, lufs: l });\n  }\n  return out;\n}\n\n\n/* =====================================================================\n   ハウリング止め（出口の安全弁）\n   スピーカーで鳴らしながらモニターを返すと、マイク→出口→マイクの輪ができる。\n   「大きい」だけでは歌と区別できないので、3つ同時に見る:\n     ① 十分大きい ② 波高率が正弦に近い（＝倍音の無い純音になっている）\n     ③ ゆっくりした基準より上がり続けている（歌は基準が追いつくが、発振は追いつかない）\n   3つが 0.7秒そろって初めて下げる。下げたあとは 2秒の余韻を持つ（また鳴き出すため）。\n   ===================================================================== */\nclass HowlGuard {\n  prepare(sr) {\n    this.sr = sr; this.on = true;\n    this.ms = 0; this.peak = 0; this.slow = 0;\n    this.aR = Math.exp(-1 / (0.030 * sr));\n    this.aP = Math.exp(-1 / (0.060 * sr));\n    this.aS = Math.exp(-1 / (1.200 * sr));\n    this.hold = 0; this.hang = 0; this.g = 1; this.engaged = false;\n    this.aAtk = Math.exp(-1 / (0.008 * sr));\n    this.aRel = Math.exp(-1 / (0.900 * sr));\n    this.th = db2lin(-24);\n    this.need = Math.round(sr * 0.7);\n    this.hangLen = Math.round(sr * 2.0);\n    this.cut = db2lin(-18);\n    this.tripped = 0;\n    // ★ 基準を 0 から立ち上げると、最初の1〜2秒はどんな音でも「上がり続けている」に\n    //    見えてしまい、大きなロングトーンで誤爆する（実測で踏んだ）。最初は素直に追う。\n    this.warm = 0; this.warmN = Math.round(sr * 0.4);\n  }\n  set(on) { this.on = !!on; if (!on) { this.hold = 0; this.hang = 0; } }\n  tick(x) {\n    if (!this.on) return x;\n    const a = x < 0 ? -x : x;\n    this.ms += (x * x - this.ms) * (1 - this.aR);\n    this.peak = a > this.peak ? a : a + (this.peak - a) * this.aP;\n    const r = Math.sqrt(this.ms);\n    if (this.warm < this.warmN) { this.warm++; this.slow = r; }\n    else this.slow += (r - this.slow) * (1 - this.aS);\n    const crest = r > 1e-6 ? this.peak / r : 99;\n    // 純音は波高率 1.41。歌は倍音があるので 1.8〜8。1.65 より下は「音楽ではない」。\n    const suspicious = (r > this.th) && (crest < 1.65) && (r > this.slow * 1.20);\n    if (suspicious) { if (this.hold < this.need) this.hold++; }\n    else { this.hold -= 6; if (this.hold < 0) this.hold = 0; }\n    if (this.hold >= this.need) { if (this.hang === 0) this.tripped++; this.hang = this.hangLen; }\n    else if (this.hang > 0) this.hang--;\n    const t = this.hang > 0 ? this.cut : 1;\n    this.engaged = this.hang > 0;\n    const c = t < this.g ? this.aAtk : this.aRel;\n    this.g = t + (this.g - t) * c;\n    return x * this.g;\n  }\n}\n\n/* =====================================================================\n   往復のずれを測る（出口→耳→マイク の合計）\n   BT でも有線でもスピーカーでも、同じやり方で測れる。\n   ===================================================================== */\n\n/** 測定用のチャープ（ハン窓つき。短くて聞こえが柔らかく、相関が鋭い） */\nfunction makeChirp(sr, ms, f0, f1) {\n  ms = ms || 45; f0 = f0 || 700; f1 = f1 || 4200;\n  const n = Math.max(8, Math.round(sr * ms / 1000));\n  const a = new Float32Array(n);\n  const T = n / sr, k = (f1 - f0) / T;\n  for (let i = 0; i < n; i++) {\n    const t = i / sr;\n    const w = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / (n - 1));\n    a[i] = Math.sin(2 * Math.PI * (f0 * t + 0.5 * k * t * t)) * w;\n  }\n  return a;\n}\n\n/**\n * rec の中から ref がいちばん合う位置を探す。\n * 返り値: { samples, ms, score } — score は「1番目の山 ÷ 2番目の山」。\n * これが小さいときは自信が無いので採用しない（VocalGzzio の「汚れた学習を採用しない」と同じ作法）。\n */\nfunction findDelay(ref, rec, sr, maxMs, minMs) {\n  const maxLag = Math.min(rec.length - ref.length, Math.round(sr * (maxMs || 700) / 1000));\n  const minLag = Math.max(0, Math.round(sr * (minMs || 0) / 1000));\n  if (maxLag <= minLag) return { samples: -1, ms: -1, score: 0 };\n  const n = ref.length;\n  let rn = 0; for (let i = 0; i < n; i++) rn += ref[i] * ref[i];\n  rn = Math.sqrt(rn) || 1;\n  const corr = new Float32Array(maxLag - minLag + 1);\n  for (let d = minLag; d <= maxLag; d++) {\n    let s = 0, e = 0;\n    for (let i = 0; i < n; i++) { const v = rec[d + i]; s += ref[i] * v; e += v * v; }\n    corr[d - minLag] = e > 1e-12 ? Math.abs(s) / (rn * Math.sqrt(e)) : 0;\n  }\n  let best = 0, bi = 0;\n  for (let i = 0; i < corr.length; i++) if (corr[i] > best) { best = corr[i]; bi = i; }\n  // 2番目の山は、1番目から 2ms 以上はなれた所で探す\n  const guard = Math.round(sr * 0.002);\n  let second = 0;\n  for (let i = 0; i < corr.length; i++) {\n    if (Math.abs(i - bi) <= guard) continue;\n    if (corr[i] > second) second = corr[i];\n  }\n  const d = bi + minLag;\n  return { samples: d, ms: d / sr * 1000, score: second > 1e-6 ? best / second : (best > 0.2 ? 99 : 0), peak: best };\n}\n\n/* TuttiGzzio — 音のスレッド（AudioWorklet）\n   ここは 2.67ms（128サンプル / 48kHz）の締切で回る場所。\n   VocalGzzio の最重要教訓「音声コールバック内でメモリ確保しない」をそのまま守る。\n   録りの入れ物は最初に48枚用意して使い回す（渡したら返してもらう）。 */\n\nconst CHUNK = 12288;          // 0.256 秒 @48k\nconst POOL = 48;              // 12秒ぶん。返ってこなくてもこれだけは耐える\n\nclass VoiceProcessor extends AudioWorkletProcessor {\n  constructor() {\n    super();\n    this.chain = new VoiceChain();\n    this.chain.prepare(sampleRate);\n\n    this.free = [];\n    for (let i = 0; i < POOL; i++) this.free.push(new Float32Array(CHUNK));\n    this.cur = this.free.pop();\n    this.curLen = 0;\n    this.spare = new Float32Array(128);\n\n    this.recording = false;\n    this.recStartFrame = 0;\n    this.recFrames = 0;\n    this.starved = 0;\n    this.tick = 0;\n    this.peakIn = 0;\n    this.lateBlocks = 0;\n    this.lastEnd = 0;\n\n    this.port.onmessage = (e) => this.onMsg(e.data);\n    this.port.postMessage({ t: 'ready', sr: sampleRate });\n  }\n\n  onMsg(m) {\n    switch (m.t) {\n      case 'params': this.chain.setParams(m.p); break;\n      case 'learn': this.chain.startLearn(m.sec || 1.5); break;\n      case 'rec':\n        if (m.on && !this.recording) {\n          this.recording = true;\n          this.recStartFrame = currentFrame;\n          this.recFrames = 0;\n          this.curLen = 0;\n          this.starved = 0;\n          this.port.postMessage({ t: 'recStarted', frame: currentFrame, time: currentTime });\n        } else if (!m.on && this.recording) {\n          this.recording = false;\n          this.flush(true);\n          this.port.postMessage({ t: 'recStopped', frames: this.recFrames, starved: this.starved });\n        }\n        break;\n      case 'give':                          // 使い終わった入れ物が返ってきた\n        if (m.buf) this.free.push(new Float32Array(m.buf));\n        break;\n    }\n  }\n\n  flush(last) {\n    if (!this.cur || this.curLen === 0) { if (last) this.port.postMessage({ t: 'chunk', last: true, len: 0 }); return; }\n    const buf = this.cur.buffer;\n    this.port.postMessage({ t: 'chunk', buf, len: this.curLen, last: !!last }, [buf]);\n    this.cur = this.free.length ? this.free.pop() : null;\n    this.curLen = 0;\n    if (!this.cur) { this.starved++; this.cur = new Float32Array(CHUNK); }   // 非常口\n  }\n\n  process(inputs, outputs) {\n    const inCh = inputs[0] && inputs[0][0];\n    const out = outputs[0];\n    const n = out[0].length;\n    const src = inCh && inCh.length === n ? inCh : this.spare;\n    if (src === this.spare) this.spare.fill(0);\n\n    this.chain.process(src, out[0], out[1], n, out[2]);\n\n    if (this.recording) {\n      let k = 0;\n      while (k < n) {\n        const room = CHUNK - this.curLen;\n        const take = room < (n - k) ? room : (n - k);\n        // subarray は毎回 view を1つ作る＝コールバック内の確保。手で写す。\n        const dst = this.cur; let d = this.curLen;\n        for (let i = 0; i < take; i++) dst[d + i] = src[k + i];\n        this.curLen += take; k += take;\n        if (this.curLen >= CHUNK) this.flush(false);\n      }\n      this.recFrames += n;\n    }\n\n    if (++this.tick >= 24) {                 // だいたい 64ms ごと\n      this.tick = 0;\n      this.port.postMessage({\n        t: 'meter',\n        in: this.chain.meterIn, out: this.chain.meterOut, gr: this.chain.grDb,\n        recFrames: this.recFrames, hum: this.chain.hum.hz,\n        frame: currentFrame, time: currentTime, free: this.free.length,\n      });\n    }\n    return true;\n  }\n}\n\nregisterProcessor('voice', VoiceProcessor);\n";
+/* =====================================================================
+   TuttiGzzio v0.2.0 — ふたりでうたう（PWA）
    VocalGzzio v3.1 の「セッション構成」をスマホへ。
    ・声の道 = ゼロ遅延の部品だけ（tools/test_dsp.mjs が実測で証明する）
    ・カラオケは「同期して鳴らす」だけ。取り込まない。
@@ -1039,7 +1249,16 @@ const S = {
   pc: null, dc: null, rtt: null, clockOff: 0, role: 'host', peerName: 'あいて',
   params: null, monitorOn: true, compare: false,
   db: null,
+  out: 'wired',            // wired | bt | speaker
+  aec: false,              // ブラウザのエコー消し
+  rt: { wired: 0, bt: 0, speaker: 0 },   // 測った往復のずれ（ms）
+  measuring: null, micReal: null,
+  ytKey: '', ytWord: 'カラオケ', ytHits: [],
 };
+
+/* ---------- 端末の中だけに置くもの（どこにも送らない） ---------- */
+function lsGet(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
 
 /* ---------- 声の道のつまみ（VocalGzzio のことば） -------------------- */
 const KNOBS = [
@@ -1126,7 +1345,8 @@ function buildKnobs() {
 }
 
 function applyPreset(name) {
-  S.params = Object.assign({}, PRESETS.session, PRESETS[name] || {});
+  const keep = { howl: S.params ? S.params.howl : true };
+  S.params = Object.assign({}, PRESETS.session, PRESETS[name] || {}, keep);
   if (name === 'off') S.params.on = false;
   buildKnobs(); pushParams();
   $$('#presetSeg .seg-b').forEach(b => b.classList.toggle('on', b.dataset.pre === name));
@@ -1169,16 +1389,56 @@ function updateLatBadge() {
 
 /* ===================== 音を始める ===================== */
 
+/**
+ * マイクを開く。エコー消しの入切は iPhone では applyConstraints では効かないことが多いので、
+ * ストリームごと開き直すのが確実。
+ * ノイズ抑制と自動音量は、こちらに同じはたらきの部品があるので always 切る
+ * （会議アプリの整音は音楽を壊す — VocalGzzio 第4弾調査）。
+ */
+async function openMic() {
+  if (S.stream) { for (const t of S.stream.getTracks()) t.stop(); S.stream = null; }
+  const want = {
+    echoCancellation: S.aec, noiseSuppression: false, autoGainControl: false,
+    channelCount: 1, sampleRate: 48000,
+  };
+  S.stream = await navigator.mediaDevices.getUserMedia({ audio: want, video: false });
+  const tr = S.stream.getAudioTracks()[0];
+  S.micReal = (tr && tr.getSettings) ? tr.getSettings() : null;
+  showMicReal();
+  return S.stream;
+}
+
+function showMicReal() {
+  const el = $('#micReal'); if (!el) return;
+  const g = S.micReal;
+  if (!g) { el.textContent = '—'; return; }
+  const b = (v) => v === true ? '入' : (v === false ? '切' : '不明');
+  const hz = g.sampleRate ? `／ ${(g.sampleRate / 1000).toFixed(1)}kHz` : '';
+  el.textContent = `エコー消し ${b(g.echoCancellation)} ／ ノイズ抑制 ${b(g.noiseSuppression)} ／ 自動音量 ${b(g.autoGainControl)} ${hz}`;
+}
+
+/** きこえかたやエコー消しを変えたときに、鳴らしたまま入口だけ差し替える */
+async function reopenMic() {
+  if (!S.ctx) return;
+  const wasRec = S.recording;
+  if (wasRec) { alert('録音中は変えられません'); return; }
+  say('#aecMsg', 'マイクを開き直しています…');
+  try {
+    await openMic();
+    if (S.srcNode) { try { S.srcNode.disconnect(); } catch (e) { } }
+    S.srcNode = S.ctx.createMediaStreamSource(S.stream);
+    S.srcNode.connect(S.node);
+    // 相手へ送る音のトラックは張り替えない（つないだままにする）
+    say('#aecMsg', 'できました。', 'ok');
+  } catch (e) {
+    say('#aecMsg', '開き直せませんでした: ' + e.message, 'bad');
+  }
+}
+
 async function startAudio() {
   say('#startMsg', 'マイクを開いています…');
   try {
-    // ★ 会議アプリの3点セットを必ず切る。これを付けたまま歌うと音楽が壊れる。
-    S.stream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: false, noiseSuppression: false, autoGainControl: false,
-        channelCount: 1, sampleRate: 48000,
-      }, video: false
-    });
+    await openMic();
   } catch (e) {
     say('#startMsg', 'マイクを使えませんでした。\n' + e.name + ': ' + e.message +
       '\n※ https:// で開いていないと iPhone はマイクを許可しません。', 'bad');
@@ -1204,8 +1464,8 @@ async function startAudio() {
   });
   S.node.port.onmessage = (e) => onWorklet(e.data);
 
-  S.src = S.ctx.createMediaStreamSource(S.stream);
-  S.src.connect(S.node);
+  S.srcNode = S.ctx.createMediaStreamSource(S.stream);
+  S.srcNode.connect(S.node);
 
   const split = S.ctx.createChannelSplitter(3);
   S.node.connect(split);
@@ -1232,6 +1492,8 @@ async function startAudio() {
   const bl = (S.ctx.baseLatency || 0) * 1000;
   const ol = (S.ctx.outputLatency || 0) * 1000;
   say('#recMsg', `この端末: ${S.sr / 1000}kHz ／ 出口までの遅れ ${(bl + ol).toFixed(1)}ms（内訳 ${bl.toFixed(1)} + ${ol.toFixed(1)}）`);
+  applyOutMode(true);
+  detectOutput();
   startMeters();
 }
 
@@ -1250,6 +1512,7 @@ function onWorklet(m) {
     }
   } else if (m.t === 'recStarted') {
     S.recStartFrame = m.frame;
+    if (S.measuring) fireChirp();
   } else if (m.t === 'recStopped') {
     finishTake(m.frames, m.starved);
   }
@@ -1396,6 +1659,7 @@ function fitMap(pairs) {
 }
 
 async function finishTake(frames, starved) {
+  if (S.measuring) { finishMeasure(); return; }
   let total = 0; for (const c of S.chunks) total += c.length;
   const pcm = new Float32Array(total);
   let o = 0; for (const c of S.chunks) { pcm.set(c, o); o += c.length; }
@@ -1406,13 +1670,15 @@ async function finishTake(frames, starved) {
   const take = {
     id: 'T' + Date.now(), who: 'じぶん', ts: Date.now(), sr: S.sr,
     startFrame: S.recStartFrame, len: total, dur: total / S.sr,
-    fit, source: S.source, videoId: S.ytId, okeName: S.okeName, pcm, use: true,
+    fit, rtMs: currentRt(), out: S.out,
+    source: S.source, videoId: S.ytId, okeName: S.okeName, pcm, use: true,
   };
   S.takes.push(take);
   await dbPut(take);
   renderTakes();
-  const t0 = fit.a * (S.recStartFrame / S.sr) + fit.b;
+  const t0 = fit.a * (S.recStartFrame / S.sr) + fit.b - take.rtMs / 1000;
   say('#recMsg', `録れました。${fmtT(total / S.sr)}／曲の ${fmtT(Math.max(0, t0))} から` +
+    (take.rtMs ? `（往復 ${take.rtMs.toFixed(0)}ms を引いてあります）` : '') +
     (starved ? `\n※ 取りこぼしの気配 ${starved} 回` : ''), 'ok');
 }
 
@@ -1617,6 +1883,18 @@ function copy(t) {
 
 /* ===================== しあげ（BandFix風ミックス） ===================== */
 
+/**
+ * テイクの先頭が「曲の中の何秒」にあたるか。
+ * ★ 再生器の位置ではなく、歌った人が耳で聴いていた位置に置く。
+ *   耳に届くまで L_out、マイクから戻るまで L_in かかるので、
+ *   録れたサンプルは (再生器の位置 − 往復) の所を歌っている。
+ *   だから往復を引く。Bluetooth でもここが合っていれば完成品はピッタリ合う。
+ */
+function takeSong0(t, sr) {
+  const a = (t.fit && t.fit.a) || 1, b = (t.fit && t.fit.b) || 0;
+  return a * (t.startFrame / (sr || t.sr || 48000)) + b - (t.rtMs || 0) / 1000;
+}
+
 /** 100Hz の包絡（ズレ合わせに使う） */
 function envelope(pcm, sr) {
   const step = Math.round(sr / 100);
@@ -1680,10 +1958,7 @@ async function doMix() {
   await step(5, '曲の中の位置をそろえています…');
 
   // 1) 各テイクの「曲の中での開始位置（秒）」
-  const items = use.map(t => {
-    const a = (t.fit && t.fit.a) || 1, b = (t.fit && t.fit.b) || 0;
-    return { t, song0: a * (t.startFrame / sr) + b, rate: a, pcm: t.pcm };
-  });
+  const items = use.map(t => ({ t, song0: takeSong0(t, sr), rate: (t.fit && t.fit.a) || 1, pcm: t.pcm }));
 
   // 2) ズレの自動合わせ（先頭を基準に、包絡の相互相関で ±0.4秒）
   if ($('#autoAlign').checked && items.length >= 2) {
@@ -1828,7 +2103,8 @@ function takeToWav(t) {
   if (scale !== 1) { pcm = new Float32Array(t.pcm.length); for (let i = 0; i < pcm.length; i++) pcm[i] = t.pcm[i] * scale; }
   return writeWav([pcm], t.sr, {
     app: 'TuttiGzzio', kind: 'take', v: 1, who: t.who, sr: t.sr, scale,
-    startFrame: t.startFrame, fit: t.fit, source: t.source, videoId: t.videoId, okeName: t.okeName || '',
+    startFrame: t.startFrame, fit: t.fit, rtMs: t.rtMs || 0, out: t.out || '',
+    source: t.source, videoId: t.videoId, okeName: t.okeName || '',
   });
 }
 
@@ -1840,7 +2116,8 @@ function wavToTake(buf, fallbackName) {
   return {
     id: 'T' + Date.now() + Math.floor(Math.random() * 1000), who: (meta && meta.who) || fallbackName || 'あいて',
     ts: Date.now(), sr, startFrame: (meta && meta.startFrame) || 0, len: pcm.length, dur: pcm.length / sr,
-    fit: (meta && meta.fit) || { a: 1, b: 0 }, source: (meta && meta.source) || 'none',
+    fit: (meta && meta.fit) || { a: 1, b: 0 }, rtMs: (meta && meta.rtMs) || 0, out: (meta && meta.out) || '',
+    source: (meta && meta.source) || 'none',
     videoId: (meta && meta.videoId) || '', okeName: (meta && meta.okeName) || '', pcm, use: true, hadMeta: !!meta,
   };
 }
@@ -1907,22 +2184,274 @@ function initMix() {
   };
 }
 
+
+/* =====================================================================
+   きこえかた（出口）・エコー消し・往復のずれ
+   ===================================================================== */
+
+const OUT_INFO = {
+  wired: {
+    hint: '<b>いちばん良い状態です。</b>往復はだいたい 15〜25ms。自分の声も返せます。',
+    aec: false, monitor: true,
+    how: '有線イヤホンの片方を、iPhone のマイク（下の穴）に近づけて押さえてから測ってください。',
+  },
+  bt: {
+    hint: 'AirPods などは往復が <b>150〜250ms</b> あります。でも<b>いつも同じ</b>なので、1回測って引けば録ったものはピッタリ合います。' +
+      '自分の声は返しません（遅れて返る自分の声はいちばん歌いにくいので）。',
+    aec: false, monitor: false,
+    how: 'イヤホンを耳から外して、iPhone のマイク（下の穴）に押しつけて測ってください。うまく測れないときは、下のスライダーで耳で合わせます。',
+  },
+  speaker: {
+    hint: 'イヤホン無しで歌えます。<b>エコー消しが自動で入ります</b>（オケがマイクに回り込むため）。' +
+      '自分の声は返しません。ハウリング止めも働きます。',
+    aec: true, monitor: false,
+    how: 'そのまま押すだけで測れます。まわりを静かにしてください。',
+  },
+};
+
+function currentRt() { return S.rt[S.out] || 0; }
+
+function applyOutMode(silent) {
+  const info = OUT_INFO[S.out] || OUT_INFO.wired;
+  $$('#outSeg .seg-b').forEach(b => b.classList.toggle('on', b.dataset.out === S.out));
+  $('#outHint').innerHTML = info.hint;
+  $('#measHow').innerHTML = info.how;
+  if (!silent || S.aec === undefined) S.aec = info.aec;
+  S.monitorOn = info.monitor;
+  $('#monChk').checked = S.monitorOn;
+  if (S.monGain) S.monGain.gain.value = S.monitorOn ? 1 : 0;
+  $$('#aecSeg .seg-b').forEach(b => b.classList.toggle('on', b.dataset.aec === (S.aec ? 'on' : 'off')));
+  $('#aecHint').innerHTML = S.aec
+    ? '端末のエコー消しが入っています。<b>回り込みは消えますが、声も音楽も少し痩せます</b>（会議アプリと同じ処理だからです）。イヤホンを使えるなら「切」のほうがきれいです。'
+    : 'エコー消しは切ってあります。<b>音がいちばんきれい</b>です。スピーカーで鳴らすときは「入」にしてください。';
+  showRt();
+  lsSet('tg.out', S.out); lsSet('tg.aec', S.aec);
+}
+
+function showRt() {
+  const ms = currentRt();
+  $('#rtNow').textContent = `${ms.toFixed(0)} ms`;
+  $('#rtVal').textContent = `${ms.toFixed(0)} ms`;
+  $('#rtSlide').value = Math.round(Math.min(500, ms));
+}
+
+/** 出口が何かを推測する（決めるのは人。こちらは「見つけたもの」を出すだけ） */
+async function detectOutput() {
+  let label = '', bt = false;
+  try {
+    const ds = await navigator.mediaDevices.enumerateDevices();
+    const outs = ds.filter(d => d.kind === 'audiooutput' && d.label);
+    if (outs.length) label = outs.slice(0, 2).map(d => d.label).join(' / ') + (outs.length > 2 ? ' ほか' : '');
+    bt = /bluetooth|airpods|beats|wireless|hands-?free|a2dp/i.test(label);
+  } catch (e) { }
+  const ol = (S.ctx && S.ctx.outputLatency) ? S.ctx.outputLatency * 1000 : 0;
+  if (ol > 90) bt = true;
+  const parts = [];
+  if (label) parts.push(label);
+  if (ol) parts.push(`出口の遅れ ${ol.toFixed(0)}ms`);
+  $('#outFound').textContent = parts.length ? parts.join(' ／ ') : '（端末が名前を教えてくれません）';
+  if (bt && S.out !== 'bt' && !S.rt.bt) {
+    say('#aecMsg', 'Bluetooth のようです。「きこえかた」を Bluetooth にして、往復のずれを1回測ってください。');
+  }
+  // 自動の当て推量（測るまでの仮の値）
+  if (!S.rt[S.out] && ol) S.rt[S.out] = Math.round(ol + (S.out === 'bt' ? 60 : 12));
+  showRt();
+}
+
+/* ---------- 往復のずれの実測 ---------- */
+
+async function measureRoundTrip() {
+  if (!S.ctx || !S.node) { alert('先に「うたう」でマイクを使ってください'); return; }
+  if (S.recording || S.measuring) return;
+  const chirp = makeChirp(S.sr, 45);
+  const prevMon = S.monGain ? S.monGain.gain.value : 0;
+  if (S.monGain) S.monGain.gain.value = 0;           // 自分の声の返りは邪魔なので止める
+  const wasOke = !!S.okeSrc; stopOke();
+  try { if (S.yt && S.ytReady) S.yt.pauseVideo(); } catch (e) { }
+
+  S.measuring = { chirp, when: 0 };
+  S.chunks = []; S.map = []; S.recording = true;
+  say('#rtMsg', 'ピッと鳴らします…');
+  S.node.port.postMessage({ t: 'rec', on: true });
+
+  await new Promise(r => setTimeout(r, 2000));
+  S.recording = false;
+  S.node.port.postMessage({ t: 'rec', on: false });
+  await new Promise(r => setTimeout(r, 600));
+  if (S.monGain) S.monGain.gain.value = S.monitorOn ? 1 : prevMon;
+  if (wasOke) { /* オケは押し直してもらう */ }
+}
+
+/** recStarted が来たら、その場でチャープを予約する */
+function fireChirp() {
+  const m = S.measuring; if (!m) return;
+  const buf = S.ctx.createBuffer(1, m.chirp.length, S.sr);
+  buf.getChannelData(0).set(m.chirp);
+  const src = S.ctx.createBufferSource();
+  const g = S.ctx.createGain(); g.gain.value = 0.7;
+  src.buffer = buf; src.connect(g).connect(S.ctx.destination);
+  m.when = S.ctx.currentTime + 0.30;
+  src.start(m.when);
+}
+
+function finishMeasure() {
+  const m = S.measuring; S.measuring = null;
+  let total = 0; for (const c of S.chunks) total += c.length;
+  const pcm = new Float32Array(total);
+  let o = 0; for (const c of S.chunks) { pcm.set(c, o); o += c.length; }
+  S.chunks = [];
+  if (!m || !m.when || total < S.sr * 0.5) { say('#rtMsg', '測れませんでした（録りが短すぎます）。', 'bad'); return; }
+  const zeroMs = (m.when - S.recStartFrame / S.sr) * 1000;
+  const r = findDelay(m.chirp, pcm, S.sr, zeroMs + 700, Math.max(0, zeroMs - 20));
+  const ms = r.ms - zeroMs;
+  // ★ 汚れた測定を採用しない（VocalGzzio の学習と同じ作法）
+  if (r.score < 2.5 || r.peak < 0.25 || ms < -5 || ms > 650) {
+    say('#rtMsg', `うまく測れませんでした（自信 ${r.score.toFixed(1)}倍・山 ${r.peak.toFixed(2)}）。\n` +
+      'イヤホンをマイクに近づける／まわりを静かにする／音量を上げる、のどれかを試してください。\n' +
+      'どうしても測れないときは、下のスライダーで耳で合わせられます。', 'bad');
+    return;
+  }
+  S.rt[S.out] = Math.max(0, ms);
+  lsSet('tg.rt', S.rt);
+  showRt();
+  say('#rtMsg', `往復 ${ms.toFixed(0)} ms でした（自信 ${r.score.toFixed(1)}倍）。\n` +
+    'これからの録音は、この分を引いて曲に合わせます。', 'ok');
+}
+
+function initEar() {
+  $$('#outSeg .seg-b').forEach(b => b.onclick = async () => {
+    S.out = b.dataset.out; applyOutMode(false);
+    if (S.ctx) await reopenMic();
+    detectOutput();
+  });
+  $$('#aecSeg .seg-b').forEach(b => b.onclick = async () => {
+    S.aec = b.dataset.aec === 'on'; applyOutMode(true);
+    if (S.ctx) await reopenMic();
+  });
+  $('#monChk').onchange = (e) => {
+    S.monitorOn = e.target.checked;
+    if (S.monGain) S.monGain.gain.value = S.monitorOn ? 1 : 0;
+  };
+  $('#howlChk').onchange = (e) => { S.params.howl = e.target.checked; pushParams(); };
+  $('#rtBtn').onclick = () => measureRoundTrip();
+  $('#rtSlide').oninput = (e) => {
+    S.rt[S.out] = parseFloat(e.target.value);
+    lsSet('tg.rt', S.rt); showRt();
+  };
+  $('#rtReset').onclick = () => { S.rt[S.out] = 0; lsSet('tg.rt', S.rt); showRt(); };
+}
+
+/* =====================================================================
+   YouTube をアプリの中でさがす
+   かぎ（APIキー）は端末の中だけ。無いときは YouTube のページを別タブで開く。
+   ===================================================================== */
+
+function initSearch() {
+  S.ytKey = lsGet('tg.ytkey', '') || '';
+  if (S.ytKey) { $('#ytKey').value = S.ytKey; say('#ytKeyMsg', 'かぎはしまってあります。', 'ok'); }
+  $('#ytKeySave').onclick = () => {
+    S.ytKey = $('#ytKey').value.trim();
+    lsSet('tg.ytkey', S.ytKey);
+    say('#ytKeyMsg', S.ytKey ? 'しまいました。この端末の中だけです。' : 'からっぽです。', S.ytKey ? 'ok' : 'bad');
+  };
+  $('#ytKeyDel').onclick = () => { S.ytKey = ''; $('#ytKey').value = ''; lsSet('tg.ytkey', ''); say('#ytKeyMsg', '消しました。'); };
+  $$('#ytWords .word').forEach(b => b.onclick = () => {
+    $$('#ytWords .word').forEach(x => x.classList.toggle('on', x === b));
+    S.ytWord = b.dataset.w;
+  });
+  $('#ytGo').onclick = () => doSearch();
+  $('#ytQ').onkeydown = (e) => { if (e.key === 'Enter') doSearch(); };
+}
+
+function searchQuery() {
+  const q = $('#ytQ').value.trim();
+  if (!q) return '';
+  return S.ytWord ? `${q} ${S.ytWord}` : q;
+}
+
+async function doSearch() {
+  const q = searchQuery();
+  if (!q) { say('#ytSearchMsg', '曲名を入れてください。', 'bad'); return; }
+  if (!S.ytKey) {
+    window.open('https://www.youtube.com/results?search_query=' + encodeURIComponent(q), '_blank', 'noopener');
+    say('#ytSearchMsg', 'YouTube を別のタブで開きました。気に入った動画の URL を、下の欄に貼ってください。\n' +
+      '（アプリの中に結果を並べたいときは、上の「かぎ」を1回だけ入れてください）');
+    return;
+  }
+  say('#ytSearchMsg', 'さがしています…');
+  $('#ytHits').innerHTML = '';
+  try {
+    const url = 'https://www.googleapis.com/youtube/v3/search' +
+      '?part=snippet&type=video&maxResults=12&videoEmbeddable=true&videoSyndicated=true' +
+      '&q=' + encodeURIComponent(q) + '&key=' + encodeURIComponent(S.ytKey);
+    const res = await fetch(url);
+    if (!res.ok) {
+      const t = await res.text();
+      const why = res.status === 403
+        ? 'かぎが使えません。YouTube Data API v3 が有効か、リファラーの制限が正しいか、1日の上限を超えていないかを見てください。'
+        : `YouTube が ${res.status} を返しました。`;
+      say('#ytSearchMsg', why + '\n' + t.slice(0, 160), 'bad');
+      return;
+    }
+    const j = await res.json();
+    const hits = (j.items || []).filter(i => i.id && i.id.videoId).map(i => ({
+      id: i.id.videoId, title: i.snippet.title, ch: i.snippet.channelTitle,
+      thumb: (i.snippet.thumbnails && (i.snippet.thumbnails.medium || i.snippet.thumbnails.default) || {}).url || '',
+    }));
+    S.ytHits = hits;
+    renderHits();
+    say('#ytSearchMsg', hits.length
+      ? `${hits.length}件。押すとその場で読み込みます。（貼りつけられる動画だけを出しています）`
+      : '見つかりませんでした。ことばを変えてみてください。', hits.length ? 'ok' : 'bad');
+  } catch (e) {
+    say('#ytSearchMsg', 'さがせませんでした: ' + e.message, 'bad');
+  }
+}
+
+function renderHits() {
+  const w = $('#ytHits'); w.innerHTML = '';
+  for (const h of S.ytHits) {
+    const b = document.createElement('button');
+    b.className = 'hit' + (h.id === S.ytId ? ' on' : '');
+    const img = document.createElement('img');
+    img.src = h.thumb; img.alt = ''; img.loading = 'lazy';
+    const d = document.createElement('div');
+    const ti = document.createElement('div'); ti.className = 'ti'; ti.textContent = decodeEnt(h.title);
+    const ch = document.createElement('div'); ch.className = 'ch'; ch.textContent = h.ch;
+    d.appendChild(ti); d.appendChild(ch);
+    b.appendChild(img); b.appendChild(d);
+    b.onclick = () => {
+      loadVideo(h.id);
+      if (S.dc && S.dc.readyState === 'open') send({ t: 'load', id: h.id });
+      renderHits();
+      say('#ytSearchMsg', `「${decodeEnt(h.title)}」を読み込みました。`, 'ok');
+    };
+    w.appendChild(b);
+  }
+}
+
+/** YouTube の題名は &amp; などが入って返ってくる */
+function decodeEnt(t) {
+  return String(t).replace(/&(#\d+|#x[0-9a-f]+|amp|quot|apos|lt|gt|#39);/gi, (m, e) => {
+    if (e[0] === '#') return String.fromCharCode(e[1] === 'x' || e[1] === 'X' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10));
+    return { amp: '&', quot: '"', apos: "'", lt: '<', gt: '>' }[e.toLowerCase()] || m;
+  });
+}
+
 /* ===================== 起動 ===================== */
 
 async function main() {
-  initTheme(); initTabs(); initKaraoke(); initDuo(); initMix();
-  S.params = Object.assign({}, PRESETS.session);
+  initTheme(); initTabs(); initKaraoke(); initDuo(); initMix(); initSearch(); initEar();
+  S.params = Object.assign({}, PRESETS.session, { howl: true });
+  S.out = lsGet('tg.out', 'wired');
+  S.aec = lsGet('tg.aec', OUT_INFO[S.out] ? OUT_INFO[S.out].aec : false);
+  S.rt = Object.assign({ wired: 0, bt: 0, speaker: 0 }, lsGet('tg.rt', {}));
+  applyOutMode(true);
   buildKnobs(); updateLatBadge();
 
   $$('#presetSeg .seg-b').forEach(b => b.onclick = () => applyPreset(b.dataset.pre));
   $('#startBtn').onclick = () => startAudio();
   $('#recBtn').onclick = () => toggleRec();
-  $('#monBtn').onclick = (e) => {
-    S.monitorOn = !S.monitorOn;
-    if (S.monGain) S.monGain.gain.value = S.monitorOn ? 1 : 0;
-    e.target.classList.toggle('on', S.monitorOn);
-    e.target.textContent = S.monitorOn ? '自分の声を聴く' : '自分の声は聴かない';
-  };
   $('#cmpBtn').onclick = (e) => {
     S.compare = !S.compare; e.target.classList.toggle('on', S.compare);
     e.target.textContent = S.compare ? 'くらべる中（素通し）' : 'くらべる（素通し）';
@@ -1955,7 +2484,7 @@ async function main() {
 /* 検査（tools/test_page.mjs）と、実機でのつまづき調べのために出しておく。
    const / class は script でも window に載らないので、明示的に置く。 */
 window.S = S;
-window.TG = { measureChain, fitMap, bestShift, envelope, renderChain, writeWav, readWav, takeToWav, wavToTake, pack, unpack, VoiceChain, loudness };
+window.TG = { measureChain, currentRt, takeSong0, applyOutMode, searchQuery, decodeEnt, makeChirp, findDelay, fitMap, bestShift, envelope, renderChain, writeWav, readWav, takeToWav, wavToTake, pack, unpack, VoiceChain, loudness };
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', main);
 else main();

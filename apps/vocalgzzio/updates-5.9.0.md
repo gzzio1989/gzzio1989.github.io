@@ -1,6 +1,6 @@
-# VocalGzzio 5.9.0 変更記録（2026年11月16日）
+# VocalGzzio 5.9.0 変更記録（2026年11月15日）
 
-**VocalGzzio 5.9.0（Zero-Latency Singing-Skill Suite & Broken-Mic Safu/Crackle ANC Edition）** では、**「挿した瞬間に歌が上手く聴こえる」** ためのゼロ遅延ボーカル表現＆音程微揺れ制振エンジン **『歌うま補正（Vocal Intonation Stabilizer ＆ 歌唱表現6エンジン一括最適化）』** と **プロ仕様『歌うま初期レシピ』** の全面刷新、さらに経年劣化・大声入力・スポンジ風防共鳴・カプセル湿気結露で壊れかけたマイクから発生する **「サフサフ音・母音中のパリパリ／チリチリ音・スピーカー擦れ（Rub & Buzz）」をゼロ遅延で引き算し長時間配信での復活も完全防止する『劣化マイク・サフサフ／チリチリ除去（Chirp-Extrapolated 6-Band Orthogonal ANC）』** を新搭載しました。あわせて日本語「ふつう」画面（Obsidian-Slate Studio）での確実な初期起動、詳細画面のワンクリック「歌うま補正」「自然音程」「劣化修復」ボタン、およびリバーブ種別コンボボックスの1対1精密同期修正を行っています。
+**VocalGzzio 5.9.0（Zero-Latency Singing-Skill Suite & Broken-Mic Safu/Crackle ANC Edition）** では、**「挿した瞬間に歌が上手く聴こえる」** ためのゼロ遅延ボーカル表現＆音程微揺れ制振エンジン **『歌うま補正（Vocal Intonation Stabilizer ＆ 歌唱表現6エンジン一括最適化）』** と **プロ仕様『歌うま初期レシピ』** の全面刷新、さらに経年劣化・大声入力・スポンジ風防共鳴で壊れかけたマイクから発生する **「サフサフ音・母音中のパリパリ／チリチリ音・スピーカー擦れ（Rub & Buzz）」をゼロ遅延で引き算する『劣化マイク・サフサフ／チリチリ除去（Chirp-Extrapolated 6-Band Orthogonal ANC）』** を新搭載しました。あわせて日本語「ふつう」画面（Obsidian-Slate Studio）での確実な初期起動、詳細画面のワンクリック「歌うま補正」「自然音程」ボタン、およびリバーブ種別コンボボックスの1対1精密同期修正を行っています。
 
 ---
 
